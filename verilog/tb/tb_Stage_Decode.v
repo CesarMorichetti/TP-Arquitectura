@@ -4,27 +4,24 @@ module tb_Stage_Decode();
 
 
     reg           clk;
-    reg           rst;
-    reg           RegWrite;
-    reg  [4  : 0] addr_data;
-    reg  [31 : 0] data; 
+
+    reg           i_RegWrite;
+    reg  [4  : 0] i_addr_data;
+    reg  [31 : 0] i_data; 
     reg  [31 : 0] i_pc;
-    reg  [31 : 0] instruction;
-    reg           write_jump;
-    reg  [4  : 0] addr_jump;
-    reg  [31 : 0] jump;
+    reg  [31 : 0] i_instruction;
+    reg  [4  : 0] i_ID_EX_rt;
+    reg           is_ID_EX_MemRead;
     
 
-    wire [4  : 0] rt_addr;
-    wire [4  : 0] rd_addr;
-    wire [31 : 0] sig_extended;
-    wire [31 : 0] rs_reg;
-    wire [31 : 0] rt_reg;
+    wire [4  : 0] o_rt_addr;
+    wire [4  : 0] o_rd_addr;
+    wire [31 : 0] o_sig_extended;
+    wire [31 : 0] o_rs_reg;
+    wire [31 : 0] o_rt_reg;
     wire [31 : 0] o_pc;
-    wire [31 : 0] jump_address;
+    wire [31 : 0] o_jump_address;
     wire          os_RegDst;
-    //wire          os_jump;
-    //wire          os_Branch;
     wire          os_MemRead;
     wire          os_MemWrite;
     wire          os_MemtoReg;
@@ -32,115 +29,75 @@ module tb_Stage_Decode();
     wire          os_ALUsrc;
     wire          os_RegWrite;
     wire          os_shmat;
+    wire [2 : 0]  os_load_store_type;
     wire [5 : 0]  o_op;
+    wire          os_pc_write;
+    wire          os_write_IF_ID;
     initial begin
-        clk         = 0;
-        rst         = 0;
-        RegWrite    = 0;
-        addr_data   = 0;
-        data        = 0; 
-        i_pc        = 0;
-        instruction = 0;
-        addr_jump   = 0;
-        jump        = 0;
-        write_jump  = 0;
+        clk                 = 0;
+        i_RegWrite          = 0;
+        i_addr_data         = 0;
+        i_data              = 0; 
+        i_pc                = 0;
+        i_instruction       = 0;
+        i_ID_EX_rt          = 0;
+        is_ID_EX_MemRead    = 0;
+
         #100
-        rst = 1;
-        
-        #10
-        RegWrite = 1;
-        addr_data = 0;
-        data = 'h00000001;
-        i_pc = 'h00000000;
-        instruction = 'h00000000;
-        addr_jump   = 0;
-        jump        = 0;
-        write_jump  = 0;
-
-        #2
-        RegWrite = 1;
-        addr_data = 1;
-        data = 'h00000002;
-        i_pc = 'h00000000;
-        instruction = 'h00000000;
-        addr_jump   = 0;
-        jump        = 0;
-        write_jump  = 0;
-
-        #2
-        RegWrite = 1;
-        addr_data = 2;
-        data = 'h00000003;
-        i_pc = 'h00000000;
-        instruction = 'h00000000;
-        addr_jump   = 0;
-        jump        = 0;
-        write_jump  = 0;
+        i_RegWrite          = 1;
+        i_addr_data         = 5'b00001;
+        i_data              = 7; 
+        //ADD
+        i_instruction       = 31'b00000000001000100010000000100000;
+        //La instruccion siguiente no es un load
+        i_ID_EX_rt          = 0;
+        is_ID_EX_MemRead    = 0;
         
         #2
-        RegWrite = 1;
-        addr_data = 3;
-        data = 'h00000004;
-        i_pc = 'h00000000;
-        instruction = 'h00000000;
-        addr_jump   = 0;
-        jump        = 0;
-        write_jump  = 0;
-        
-        #10
-        RegWrite = 0;          
-        addr_data = 5;
-        data = 'h00000008; 
-        i_pc = 'h0000000a;
-        instruction = 'h00221820;
-        addr_jump   = 0;
-        jump        = 0;
-        write_jump  = 0;
-        
+        i_RegWrite          = 0;
+        i_addr_data         = 0;
+        i_data              = 0; 
+        //Instruccion de adelante es un load y coincide uno de los reg(rs)
+        i_instruction       = 31'b00000000001000100000000000100000;
+        i_ID_EX_rt          = 5'b00001;
+        is_ID_EX_MemRead    = 1;
         #2
-        RegWrite = 0;
-        addr_data = 6;
-        data = 'h0000000f;
-        i_pc = 'h00000005;
-        instruction = 'h80220000;
-        addr_jump   = 0;
-        jump        = 0;
-        write_jump  = 0;
-        
+        i_RegWrite          = 0;
+        i_addr_data         = 0;
+        i_data              = 0; 
+        //Instruccion de adelante es un load pero no coinsiden los reg 
+        i_instruction       = 31'b00000000001000100000000000100000;
+        i_ID_EX_rt          = 5'b00011;
+        is_ID_EX_MemRead    = 1;
         #2
-        RegWrite = 0;
-        addr_data = 6;
-        data = 'h0000000f;
-        i_pc = 'h00000005;
-        instruction = 'h80220000;
-        addr_jump   = 9;
-        jump        = 'hffffffff;
-        write_jump  = 1;
+        i_RegWrite          = 0;
+        i_addr_data         = 0;
+        i_data              = 0; 
+        //Instruccion de adelante es un load y coincide uno de los reg(rt)
+        i_instruction       = 31'b00000000001000100000000000100000;
+        i_ID_EX_rt          = 5'b00010;
+        is_ID_EX_MemRead    = 1;
     end
 
     always #1 clk = ~ clk;
     
     Stage_Decode u_Stage_Decode(
                             .clk(clk),
-                            .rst(rst),
-                            .i_addr_data(addr_data),
-                            .i_data(data), 
-                            .i_RegWrite(RegWrite),
+                            .i_addr_data(i_addr_data),
+                            .i_data(i_data), 
+                            .i_RegWrite(i_RegWrite),
                             .i_pc(i_pc),
-                            .i_instruction(instruction),
-                            .i_addr_jump(addr_jump),
-                            .i_jump(jump),
-                            .i_write_jump(write_jump),
-                            .o_rt_addr(rt_addr),
-                            .o_rd_addr(rd_addr),
-                            .o_sig_extended(sig_extended),
-                            .o_rs_reg(rs_reg),
-                            .o_rt_reg(rt_reg),
+                            .i_instruction(i_instruction),
+                            .i_ID_EX_rt(i_ID_EX_rt),
+                            .is_ID_EX_MemRead(is_ID_EX_MemRead),
+                            .o_rt_addr(o_rt_addr),
+                            .o_rd_addr(o_rd_addr),
+                            .o_sig_extended(o_sig_extended),
+                            .o_rs_reg(o_rs_reg),
+                            .o_rt_reg(o_rt_reg),
                             .o_pc(o_pc),
-                            .o_jump_address(jump_address),
+                            .o_jump_address(o_jump_address),
                             .os_RegDst(os_RegDst),
-                            //.os_jump(os_jump),
-                            //.os_Branch(os_Branch),
                             .os_MemRead(os_MemRead),
                             .os_MemWrite(os_MemWrite),
                             .os_MemtoReg(os_MemtoReg),
@@ -148,6 +105,9 @@ module tb_Stage_Decode();
                             .os_ALUsrc(os_ALUsrc),
                             .os_RegWrite(os_RegWrite),
                             .os_shmat(os_shmat),
-                            .o_op(o_op)
+                            .os_load_store_type(os_load_store_type),
+                            .o_op(o_op),
+                            .os_pc_write(os_pc_write),
+                            .os_write_IF_ID(os_write_IF_ID)
                             );
 endmodule

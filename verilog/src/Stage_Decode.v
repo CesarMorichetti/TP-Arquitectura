@@ -7,7 +7,10 @@ module Stage_Decode(
                     input wire           i_RegWrite,
                     //desde Fetch
                     input wire  [31 : 0] i_pc,
-                    input  wire [31 : 0] i_instruction,
+                    input wire  [31 : 0] i_instruction,
+                    //para la hazard unit
+                    input wire  [4  : 0] i_ID_EX_rt,
+                    input wire           is_ID_EX_MemRead,
                     //Salidas
                     output wire [4  : 0] o_rt_addr,
                     output wire [4  : 0] o_rd_addr,
@@ -26,7 +29,10 @@ module Stage_Decode(
                     output wire          os_shmat,
                     output wire [2 : 0]  os_load_store_type,
                     //para branch unit
-                    output wire [5 : 0]  o_op
+                    output wire [5 : 0]  o_op,
+                    //para hazard unit
+                    output wire          os_pc_write,
+                    output wire          os_write_IF_ID
 );
 
     wire [5  : 0]  op;
@@ -39,8 +45,20 @@ module Stage_Decode(
     wire [31:0] rt_reg;
     wire [31:0] signExt; 
     wire [31:0] jump_address;
+    
+    //buses entre control y mux control
+    wire         bus_RegDst;
+    wire         bus_MemRead;
+    wire         bus_MemWrite;
+    wire         bus_MemtoReg;
+    wire [3 : 0] bus_ALUop;
+    wire         bus_ALUsrc;
+    wire         bus_RegWrite;
+    wire         bus_shmat;
+    wire [2 : 0] bus_load_store_type;
 
-
+    //buses que salen de hazard unit
+    wire         bus_mux_control;
 
     assign op     = i_instruction[31 -: 6];
     assign rs     = i_instruction[25 -: 5];
@@ -49,6 +67,15 @@ module Stage_Decode(
     assign address = i_instruction[15 -: 16];
     assign jump_address = {{24{1'b0}}, i_instruction[7 -: 8]};
    
+    hazard_unit u_hazard_unit(
+                             .is_ID_EX_MemRead(is_ID_EX_MemRead),
+                             .i_ID_EX_Rt(i_ID_EX_rt),
+                             .i_IF_ID_Rs(rs),
+                             .i_IF_ID_Rt(rt),
+                             .os_PC_write(os_pc_write),
+                             .os_write_IF_ID(os_write_IF_ID),
+                             .os_mux_control(bus_mux_control)
+                             );
     registers u_register (
                     .clk(clk),
                     .i_wenable(i_RegWrite),
@@ -69,17 +96,38 @@ module Stage_Decode(
     control u_control(
                     .i_op(op),
                     .i_func(address[5:0]),
-                    .RegDst(os_RegDst),
-                    .MemRead(os_MemRead),
-                    .MemWrite(os_MemWrite),
-                    .MemtoReg(os_MemtoReg),
-                    .ALUop(os_ALUop),
-                    .ALUsrc(os_ALUsrc),
-                    .RegWrite(os_RegWrite),
-                    .shmat(os_shmat),
-                    .load_store_type(os_load_store_type)
+                    .RegDst(bus_RegDst),
+                    .MemRead(bus_MemRead),
+                    .MemWrite(bus_MemWrite),
+                    .MemtoReg(bus_MemtoReg),
+                    .ALUop(bus_ALUop),
+                    .ALUsrc(bus_ALUsrc),
+                    .RegWrite(bus_RegWrite),
+                    .shmat(bus_shmat),
+                    .load_store_type(bus_load_store_type)
                     );
     
+    MUX_control u_MUX_control(
+                    .is_selector(bus_mux_control),
+                    .is_RegDst(bus_RegDst),
+                    .is_MemRead(bus_MemRead),
+                    .is_MemWrite(bus_MemWrite),
+                    .is_MemtoReg(bus_MemtoReg),
+                    .is_ALUop(bus_ALUop),
+                    .is_ALUsrc(bus_ALUsrc),
+                    .is_RegWrite(bus_RegWrite),
+                    .is_shmat(bus_shmat),
+                    .is_load_store_type(bus_load_store_type),
+                    .os_RegDst(os_RegDst),
+                    .os_MemRead(os_MemRead),
+                    .os_MemWrite(os_MemWrite),
+                    .os_MemtoReg(os_MemtoReg),
+                    .os_ALUop(os_ALUop),
+                    .os_ALUsrc(os_ALUsrc),
+                    .os_RegWrite(os_RegWrite),
+                    .os_shmat(os_shmat),
+                    .os_load_store_type (os_load_store_type)
+                    );
     assign o_rt_addr = rt;
     assign o_rd_addr = rd;
     assign o_sig_extended = signExt;
