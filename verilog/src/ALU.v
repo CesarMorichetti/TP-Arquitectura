@@ -22,32 +22,32 @@ module ALU(
     parameter [3 : 0] SLLV = 4'b1010;  
     parameter [3 : 0] SRLV = 4'b1011;  
     parameter [3 : 0] SRAV = 4'b1100;  
-    parameter [3 : 0] ADDU = 4'b1101;  
-    parameter [3 : 0] SUBU = 4'b1110;  
-    parameter [3 : 0] LUI  = 4'b1111;//default  
+    //parameter [3 : 0] ADDU = 4'b1101;  
+    //parameter [3 : 0] SUBU = 4'b1110;  
+    parameter [3 : 0] LUI  = 4'b1101;  
    
     
     always @(*) begin
         case(i_operation)
-            ADD:  o_res <= $signed(i_A) + $signed(i_B);
-            SUB:  o_res <= $signed(i_A) - $signed(i_B);
+            ADD:  o_res <= i_A + i_B;
+            SUB:  o_res <= i_A - i_B;
             AND:  o_res <= i_A & i_B;
             OR :  o_res <= i_A | i_B;
             XOR:  o_res <= i_A ^ i_B;
             NOR:  o_res <= ~(i_A | i_B);
-            SLT:  o_res <= {32{$signed(i_A)<$signed(i_B)}};
+            SLT:  o_res <= {31'b0,{$signed(i_A)<$signed(i_B)}};
             SLL:  o_res <= i_B << i_A[10 -: 5];
             SRL:  o_res <= i_B >> i_A[10 -: 5];
             SRA:  o_res <= $signed(i_B) >>> i_A[10 -: 5];
             SLLV: o_res <= i_B << i_A;
             SRLV: o_res <= i_B >> i_A;
             SRAV: o_res <= $signed(i_B) >>> i_A;
-            ADDU: o_res <= i_A + i_B;
-            SUBU: o_res <= i_A - i_B;
+            //ADDU: o_res <= i_A + i_B;
+            //SUBU: o_res <= i_A - i_B;
             LUI:  o_res <= {i_B[15 : 0], 16'b0000000000000000};
+            default: o_res <= 0;
         endcase
     end
-    //assign o_zero = result == 0 ? 1: 0;
     
 endmodule
 

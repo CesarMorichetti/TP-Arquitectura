@@ -18,9 +18,9 @@ module ALU_control(
     parameter [3 : 0] SLLV = 4'b1010;  
     parameter [3 : 0] SRLV = 4'b1011;  
     parameter [3 : 0] SRAV = 4'b1100;  
-    parameter [3 : 0] ADDU = 4'b1101;  
-    parameter [3 : 0] SUBU = 4'b1110;  
-    parameter [3 : 0] LUI  = 4'b1111;
+    //parameter [3 : 0] ADDU = 4'b1101;  
+    //parameter [3 : 0] SUBU = 4'b1110;  
+    parameter [3 : 0] LUI  = 4'b1101;
 
     always@(*)begin
         case(is_ALUop)
@@ -40,13 +40,13 @@ module ALU_control(
                     6'b000100: o_operation = SLLV;
                     6'b000110: o_operation = SRLV;
                     6'b000111: o_operation = SRAV;
-                    6'b100001: o_operation = ADDU;
-                    6'b100011: o_operation = SUBU;
+                    6'b100001: o_operation = ADD;
+                    6'b100011: o_operation = SUB;
                     default: o_operation = 4'b0000;
                 endcase
             end
             //es load o store entonces suma
-            4'b0001: o_operation = ADDU;
+            4'b0001: o_operation = ADD;
             //ADDI
             4'b1000: o_operation = ADD;               
             //ANDI

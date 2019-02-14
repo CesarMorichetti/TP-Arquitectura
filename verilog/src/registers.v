@@ -11,9 +11,10 @@ module registers(
         output reg [31:0] o_data_rs,
         output reg [31:0] o_data_rt
     );
-
-
     reg [31:0]register_file[0:31];
+    initial begin
+        $readmemb("clear_register.mem", register_file);
+    end
 
     always@(posedge clk) begin
         if(i_wenable) begin

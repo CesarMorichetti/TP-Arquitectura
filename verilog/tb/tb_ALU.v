@@ -2,22 +2,18 @@
 
 module tb_ALU();
 
-    reg           rst;
     reg  [31 : 0] i_A;
     reg  [31 : 0] i_B;
     reg  [3  : 0] i_operation;
    
-    wire          o_zero;
     wire [31 : 0] o_res;
 
     initial begin
-        rst         = 0;
         i_A         = 0;
         i_B         = 0;
         i_operation = 0;
     
         #100
-        rst = 1;
        
         //ADD
         #10
@@ -123,11 +119,9 @@ module tb_ALU();
     end
 
     ALU u_ALU(
-             .rst(rst),
              .i_A(i_A),
              .i_B(i_B),
              .i_operation(i_operation),
-             .o_zero(o_zero),
              .o_res(o_res)
              );
 endmodule
