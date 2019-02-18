@@ -20,6 +20,7 @@ module Stage_Execution(
                 input  wire          is_RegWrite,
                 input  wire          is_shmat,
                 input  wire [2  : 0] is_load_store_type,
+                input  wire          is_stall,
                 output wire [31 : 0] o_jump,//direccion a saltar
                 output wire [31 : 0] o_pc_to_reg,//para el caso de salto que
                                                  //escribe banco de registros
@@ -48,6 +49,7 @@ module Stage_Execution(
                             .i_pc(i_pc),
                             .i_rs_reg(i_rs_reg),
                             .i_rt_reg(i_rt_reg),
+                            .is_stall(is_stall),
                             .os_taken(os_taken),
                             .os_write_pc(os_write_pc),
                             .os_select_addr_reg(os_select_addr_reg),

@@ -2,7 +2,6 @@
 module MIPS(
             input  wire          clk,
             input  wire          rst,
-            input  wire          i_PC_write,
             output wire [31 : 0] o_resultado,
             output wire [4  : 0] o_direccion
             );
@@ -18,6 +17,9 @@ module MIPS(
     wire [4  : 0] bus_addr_reg_dst;
     wire          bus_RegWrite;
 
+    //---hazard unit
+    wire          bus_PC_write;//no escribe el pc
+    wire          bus_write_IF_ID;//no escribe el Latch_IF_ID
     //Wires Stage Fetch
     wire [31 : 0] pc_if_latch;
     wire [31 : 0] instruction_if_latch;
@@ -42,6 +44,7 @@ module MIPS(
     wire          RegWrite_id_latch;
     wire          shmat_id_latch;
     wire [5 : 0]  op_id_latch;         
+    wire          stall_id_latch;
 
     wire [4  : 0] rt_addr_latch_ex;
     wire [4  : 0] rd_addr_latch_ex;
@@ -60,7 +63,8 @@ module MIPS(
     wire          shmat_latch_ex; 
     wire [5 : 0]  op_latch_ex;
     wire [2 : 0]  load_store_latch_id;
-   
+    wire          stall_latch_ex;
+
     //Wires Stage Execution
     wire [31 : 0] jump_ex_latch;
     wire [4  : 0] addr_jump_ex_latch;
@@ -119,16 +123,18 @@ module MIPS(
                             .rst(rst),
                             .i_taken(bus_taken),
                             .i_branch_address(bus_jump),
-                            .i_PC_write(i_PC_write),
+                            .i_PC_write(bus_PC_write),
                             .o_pc(pc_if_latch),
                             .o_instruction(instruction_if_latch)
                             );
+
     
     Latch_IF_ID u_latch_if_id(
                             .clk(clk),
                             .rst(rst),
                             .i_pc(pc_if_latch),
                             .i_instruction(instruction_if_latch),
+                            .is_write_IF_ID(bus_write_IF_ID),
                             .o_pc(pc_latch_id),
                             .o_instruction(instruction_latch_id)
                             );
@@ -140,6 +146,8 @@ module MIPS(
                             .i_RegWrite(bus_RegWrite),
                             .i_pc(pc_latch_id),
                             .i_instruction(instruction_latch_id),
+                            .i_ID_EX_rt(rt_addr_latch_ex),
+                            .is_ID_EX_MemRead(MemRead_latch_ex),
                             .o_rt_addr(rt_addr_id_latch),
                             .o_rd_addr(rd_addr_id_latch),
                             .o_sig_extended(sig_extended_id_latch),
@@ -156,7 +164,10 @@ module MIPS(
                             .os_RegWrite(RegWrite_id_latch),
                             .os_shmat(shmat_id_latch),
                             .os_load_store_type(load_store_id_latch),
-                            .o_op(op_id_latch)
+                            .o_op(op_id_latch),
+                            .os_pc_write(bus_PC_write),
+                            .os_write_IF_ID(bus_write_IF_ID),
+                            .os_stall(stall_id_latch)
                             );
     Latch_ID_EX u_latch_id_ex(
                             .clk(clk),
@@ -178,6 +189,7 @@ module MIPS(
                             .is_shmat(shmat_id_latch),
                             .is_load_store_type(load_store_id_latch),
                             .i_op(op_id_latch),
+                            .is_stall(stall_id_latch),
                             .o_rt_addr(rt_addr_latch_ex),
                             .o_rd_addr(rd_addr_latch_ex),
                             .o_sig_extended(sig_extended_latch_ex),
@@ -194,7 +206,8 @@ module MIPS(
                             .os_ALUsrc(ALUsrc_latch_ex),
                             .os_RegWrite(RegWrite_latch_ex),
                             .os_shmat(shmat_latch_ex),
-                            .os_load_store_type(load_store_latch_id)
+                            .os_load_store_type(load_store_latch_id),
+                            .os_stall(stall_latch_ex)
                             );
     //Stage Execution
     Stage_Execution u_Stage_Execution(
@@ -216,6 +229,7 @@ module MIPS(
                             .is_RegWrite(RegWrite_latch_ex),
                             .is_shmat(shmat_latch_ex),
                             .is_load_store_type(load_store_latch_id),
+                            .is_stall(stall_latch_ex),
                             .o_jump(jump_ex_latch),
                             .o_pc_to_reg(pc_to_reg_ex_latch),
                             .o_ALU_res(ALU_res_ex_latch),

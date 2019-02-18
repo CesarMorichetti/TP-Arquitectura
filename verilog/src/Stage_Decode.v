@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+
 module Stage_Decode(
                     input wire           clk,
                     //desde WB
@@ -31,8 +32,10 @@ module Stage_Decode(
                     //para branch unit
                     output wire [5 : 0]  o_op,
                     //para hazard unit
-                    output wire          os_pc_write,
-                    output wire          os_write_IF_ID
+                    output wire          os_pc_write,//esta no entra al latch
+                    output wire          os_write_IF_ID,//esta no entra al latch
+                    output wire          os_stall//esta si es la señal para meter
+                                                //burbuja en las señales de salto
 );
 
     wire [5  : 0]  op;
@@ -136,4 +139,5 @@ module Stage_Decode(
     assign o_pc = i_pc;
     assign o_jump_address = jump_address;
     assign o_op = op;
+    assign os_stall = bus_mux_control;
 endmodule

@@ -20,6 +20,7 @@ module Latch_ID_EX(
     input wire          is_RegWrite,
     input wire          is_shmat,
     input wire [2  : 0] is_load_store_type,
+    input wire          is_stall, 
     output reg [4  : 0] o_rt_addr,
     output reg [4  : 0] o_rd_addr,
     output reg [31 : 0] o_sig_extended,
@@ -36,7 +37,8 @@ module Latch_ID_EX(
     output reg          os_ALUsrc,
     output reg          os_RegWrite,
     output reg          os_shmat,
-    output reg [2 : 0]  os_load_store_type
+    output reg [2 : 0]  os_load_store_type,
+    output reg          os_stall
     );
     
     always@(posedge clk)
@@ -59,6 +61,7 @@ module Latch_ID_EX(
             os_shmat            <= 0;
             os_load_store_type  <= 0;
             o_op                <= 0; 
+            os_stall            <= 0;
         end
         else begin
             o_rt_addr           <= i_rt_addr;
@@ -78,6 +81,7 @@ module Latch_ID_EX(
             os_shmat            <= is_shmat;
             os_load_store_type  <= is_load_store_type;
             o_op                <= i_op;
+            os_stall            <= is_stall;
         end
     end
 

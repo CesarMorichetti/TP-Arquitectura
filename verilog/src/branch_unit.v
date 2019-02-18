@@ -7,6 +7,7 @@ module branch_unit(
     input wire  [31 : 0] i_pc,
     input wire  [31 : 0] i_rs_reg,
     input wire  [31 : 0] i_rt_reg,
+    input wire           is_stall,
     //senal para el mux del pc
     output reg          os_taken,
     //senal para el segundo mux en etapa wb, indica que se
@@ -33,92 +34,101 @@ module branch_unit(
             o_pc_to_reg        = 0;
         end
         else begin
-            case(i_op)
-                6'b000000: begin
-                    case(i_sign_ext[5 -: 6])
-                        //JR
-                        6'b001000:begin
+            if(is_stall) begin
+                case(i_op)
+                    6'b000000: begin
+                        case(i_sign_ext[5 -: 6])
+                            //JR
+                            6'b001000:begin
+                                os_taken           = 1;
+                                os_write_pc        = 0;
+                                os_select_addr_reg = 0;
+                                o_jump_address     = i_rs_reg;
+                                o_pc_to_reg        = 0;
+                            end                      
+                            //JALR
+                            6'b001001:begin
+                                os_taken           = 1;
+                                os_write_pc        = 1;
+                                os_select_addr_reg = 0;//hace que pase la dir d
+                                o_jump_address     = i_rs_reg;
+                                o_pc_to_reg        = i_pc; 
+                            end
+                            default:begin
+                                os_taken           = 0;
+                                os_write_pc        = 0;
+                                os_select_addr_reg = 0;
+                                o_jump_address     = 0;
+                                o_pc_to_reg        = 0; 
+                            end
+                        endcase
+                    end
+                    //BEQ
+                    6'b000100:begin
+                        if(i_rs_reg == i_rt_reg)begin
                             os_taken           = 1;
                             os_write_pc        = 0;
                             os_select_addr_reg = 0;
-                            o_jump_address     = i_rs_reg;
-                            o_pc_to_reg        = 0;
-                        end                      
-                        //JALR
-                        6'b001001:begin
-                            os_taken           = 1;
-                            os_write_pc        = 1;
-                            os_select_addr_reg = 0;//hace que pase la dir d
-                            o_jump_address     = i_rs_reg;
-                            o_pc_to_reg        = i_pc; 
-                        end
-                        default:begin
+                            o_jump_address     = i_pc + i_sign_ext;
+                            o_pc_to_reg        = 0; 
+                        end 
+                        else begin
                             os_taken           = 0;
                             os_write_pc        = 0;
                             os_select_addr_reg = 0;
                             o_jump_address     = 0;
                             o_pc_to_reg        = 0; 
                         end
-                    endcase
-                end
-                //BEQ
-                6'b000100:begin
-                    if(i_rs_reg == i_rt_reg)begin
+                    end
+                    //BNE
+                    6'b000101:begin
+                        if(i_rs_reg == i_rt_reg)begin
+                            os_taken           = 0;
+                            os_write_pc        = 0;
+                            os_select_addr_reg = 0;
+                            o_jump_address     = 0;
+                            o_pc_to_reg        = 0; 
+                        end 
+                        else begin
+                            os_taken           = 1;
+                            os_write_pc        = 0;
+                            os_select_addr_reg = 0;
+                            o_jump_address     = i_pc + i_sign_ext;
+                            o_pc_to_reg        = 0; 
+                        end
+                    end
+                    //J
+                    6'b000010:begin
                         os_taken           = 1;
                         os_write_pc        = 0;
                         os_select_addr_reg = 0;
-                        o_jump_address     = i_pc + i_sign_ext;
-                        o_pc_to_reg        = 0; 
-                    end 
-                    else begin
+                        o_jump_address     = i_jump_address;
+                        o_pc_to_reg        = 0;
+                    end
+                    //JAL
+                    6'b000011:begin
+                        os_taken           = 1;
+                        os_write_pc        = 1;
+                        os_select_addr_reg = 1;//selecciona direccion 31
+                        o_jump_address     = i_jump_address;
+                        o_pc_to_reg        = i_pc;
+                    end
+                    default:begin
                         os_taken           = 0;
                         os_write_pc        = 0;
                         os_select_addr_reg = 0;
                         o_jump_address     = 0;
                         o_pc_to_reg        = 0; 
                     end
-                end
-                //BNE
-                6'b000101:begin
-                    if(i_rs_reg == i_rt_reg)begin
-                        os_taken           = 0;
-                        os_write_pc        = 0;
-                        os_select_addr_reg = 0;
-                        o_jump_address     = 0;
-                        o_pc_to_reg        = 0; 
-                    end 
-                    else begin
-                        os_taken           = 1;
-                        os_write_pc        = 0;
-                        os_select_addr_reg = 0;
-                        o_jump_address     = i_pc + i_sign_ext;
-                        o_pc_to_reg        = 0; 
-                    end
-                end
-                //J
-                6'b000010:begin
-                    os_taken           = 1;
-                    os_write_pc        = 0;
-                    os_select_addr_reg = 0;
-                    o_jump_address     = i_jump_address;
-                    o_pc_to_reg        = 0;
-                end
-                //JAL
-                6'b000011:begin
-                    os_taken           = 1;
-                    os_write_pc        = 1;
-                    os_select_addr_reg = 1;//selecciona direccion 31
-                    o_jump_address     = i_jump_address;
-                    o_pc_to_reg        = i_pc;
-                end
-                default:begin
-                    os_taken           = 0;
-                    os_write_pc        = 0;
-                    os_select_addr_reg = 0;
-                    o_jump_address     = 0;
-                    o_pc_to_reg        = 0; 
-                end
-            endcase
+                endcase
+            end
+            else begin 
+                os_taken           = 0;
+                os_write_pc        = 0;
+                os_select_addr_reg = 0;
+                o_jump_address     = 0;
+                o_pc_to_reg        = 0;
+            end
         end
     end
 endmodule
