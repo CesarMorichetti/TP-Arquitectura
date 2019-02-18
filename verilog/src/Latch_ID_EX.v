@@ -3,8 +3,10 @@
 module Latch_ID_EX(
     input wire clk,
     input wire rst,
+    input wire          is_jump_taken,//limpia en caso de salto
     input wire [4  : 0] i_rt_addr,
     input wire [4  : 0] i_rd_addr,
+    input wire [4  : 0] i_rs_addr, 
     input wire [31 : 0] i_sig_extended,//Parte menos significativa de la instruccion ext
     input wire [31 : 0] i_rs_reg,//registro, no confundir con la direccion
     input wire [31 : 0] i_rt_reg,//registro, no confundir con la direccion
@@ -23,6 +25,7 @@ module Latch_ID_EX(
     input wire          is_stall, 
     output reg [4  : 0] o_rt_addr,
     output reg [4  : 0] o_rd_addr,
+    output reg [4  : 0] o_rs_addr,
     output reg [31 : 0] o_sig_extended,
     output reg [31 : 0] o_rs_reg,
     output reg [31 : 0] o_rt_reg,
@@ -43,9 +46,10 @@ module Latch_ID_EX(
     
     always@(posedge clk)
     begin
-        if(~rst)begin
+        if(~rst || is_jump_taken)begin
             o_rt_addr           <= 0;
             o_rd_addr           <= 0;
+            o_rs_addr           <= 0;
             o_sig_extended      <= 0;
             o_rs_reg            <= 0;
             o_rt_reg            <= 0;
@@ -66,6 +70,7 @@ module Latch_ID_EX(
         else begin
             o_rt_addr           <= i_rt_addr;
             o_rd_addr           <= i_rd_addr;
+            o_rs_addr           <= i_rs_addr;
             o_sig_extended      <= i_sig_extended;
             o_rs_reg            <= i_rs_reg;
             o_rt_reg            <= i_rt_reg;

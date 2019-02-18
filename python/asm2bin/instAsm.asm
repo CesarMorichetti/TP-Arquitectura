@@ -1,19 +1,18 @@
-lui r1 1
-lui r2 2
-lui r3 3
-lui r18 51
+addi r1 r1 1
+addi r2 r2 2
+addi r3 r3 3
+addi r4 r4 4
+addi r5 r5 5
+addi r6 r6 6
+addi r7 r7 7
+addi r8 r8 8
+addi r9 r9 0
+add r10 r1 r2
+sw  r10 0(r9)
+sub r11 r4 r4
+beq r11 r0 4
 nop
 nop
 nop
 nop
-srl r1 r1 16
-srl r2 r2 16
-srl r3 r3 16
-srl r18 r18 16
-nop
-nop
-nop
-nop
-add r4 r1 r2
-sw r1 3(r3)
-sw r1 3(r3)
+lb r12 0(r9)

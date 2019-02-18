@@ -6,7 +6,7 @@ module Stage_Memory(
                 input  wire [4  : 0] i_addr_reg_dst,
                 input  wire [31 : 0] i_pc_to_reg,
                 input  wire          is_write_pc,
-                input  wire          is_select_addr_reg,
+                //input  wire          is_select_addr_reg,
                 input  wire          is_RegWrite,
                 input  wire          is_MemtoReg,
                 input  wire          is_MemWrite,
@@ -16,7 +16,7 @@ module Stage_Memory(
                 output wire [31 : 0] o_ALU_res,
                 output wire [4  : 0] o_addr_reg_dst,
                 output wire [31 : 0] o_pc_to_reg,
-                output wire          os_select_addr_reg,
+                //output wire          os_select_addr_reg,
                 output wire          os_write_pc,
                 output wire          os_RegWrite,
                 output wire          os_MemtoReg
@@ -51,6 +51,6 @@ module Stage_Memory(
     assign o_pc_to_reg        = i_pc_to_reg;
     assign os_RegWrite        = is_RegWrite;
     assign os_MemtoReg        = is_MemtoReg;
-    assign os_select_addr_reg = is_select_addr_reg;
+    //assign os_select_addr_reg = is_select_addr_reg;
     assign os_write_pc        = is_write_pc;
 endmodule

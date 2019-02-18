@@ -22,7 +22,7 @@ module registers(
         end
     end
     always@(negedge clk) begin
-        o_data_rs = register_file[i_addres_rs];
-        o_data_rt = register_file[i_addres_rt];
+        o_data_rs <= register_file[i_addres_rs];
+        o_data_rt <= register_file[i_addres_rt];
     end
 endmodule

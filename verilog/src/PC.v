@@ -12,7 +12,7 @@ module PC(
     
     always @(posedge clk) begin
         if (~rst)begin
-            PC_temp <= 32'b11111111111111111111111111111111;  
+            PC_temp <= 32'b00000000000000000000000000000000;  
         end
         else begin 
             if(i_PC_write) begin

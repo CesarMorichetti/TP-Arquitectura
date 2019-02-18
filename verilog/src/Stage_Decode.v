@@ -15,6 +15,7 @@ module Stage_Decode(
                     //Salidas
                     output wire [4  : 0] o_rt_addr,
                     output wire [4  : 0] o_rd_addr,
+                    output wire [4  : 0] o_rs_addr,
                     output wire [31 : 0] o_sig_extended,//Parte menos significativa de la instruccion ext
                     output wire [31 : 0] o_rs_reg,//registro, no confundir con la direccion
                     output wire [31 : 0] o_rt_reg,//registro, no confundir con la direccion
@@ -133,6 +134,7 @@ module Stage_Decode(
                     );
     assign o_rt_addr = rt;
     assign o_rd_addr = rd;
+    assign o_rs_addr = rs;
     assign o_sig_extended = signExt;
     assign o_rs_reg = rs_reg;
     assign o_rt_reg = rt_reg;

@@ -6,7 +6,7 @@ module Stage_WriteBack(
                       input  wire [31 : 0] i_pc_to_reg,
                       input  wire          is_RegWrite,
                       input  wire          is_MemtoReg,
-                      input  wire          is_select_addr_reg,
+                      //input  wire          is_select_addr_reg,
                       input  wire          is_write_pc,
                       output wire [31 : 0] o_reg_dst,
                       output wire [4  : 0] o_addr_reg_dst,
@@ -21,6 +21,7 @@ module Stage_WriteBack(
                    .i_entradaMUX_1(i_output_mem),
                    .o_salidaMUX(bus_data_wb)
                    );
+    /*
     MUX2to1#(.LEN(5))
            u_MUX_WB(
                    .i_selector(is_select_addr_reg),
@@ -28,6 +29,7 @@ module Stage_WriteBack(
                    .i_entradaMUX_1(5'b11111),//es el reg 31 para la instruccion jal
                    .o_salidaMUX(o_addr_reg_dst)
                    );
+    */
     MUX2to1#(.LEN(32))
            u_MUX_ADDR(
                    .i_selector(is_write_pc),
@@ -37,4 +39,5 @@ module Stage_WriteBack(
                    );
 
     assign os_RegWrite    = is_RegWrite;
+    assign o_addr_reg_dst = i_addr_reg_dst;
 endmodule

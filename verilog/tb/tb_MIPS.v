@@ -10,7 +10,7 @@ module tb_MIPS();
         clk = 0;
         rst = 0;
 
-        #100
+        #101
         rst        = 1;
     end
 

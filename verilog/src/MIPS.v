@@ -29,6 +29,7 @@ module MIPS(
     //Wires Stage Decode
     wire [4  : 0] rt_addr_id_latch;
     wire [4  : 0] rd_addr_id_latch;
+    wire [4  : 0] rs_addr_id_latch;
     wire [31 : 0] sig_extended_id_latch;
     wire [31 : 0] rs_reg_id_latch;
     wire [31 : 0] rt_reg_id_latch;
@@ -48,6 +49,7 @@ module MIPS(
 
     wire [4  : 0] rt_addr_latch_ex;
     wire [4  : 0] rd_addr_latch_ex;
+    wire [4  : 0] rs_addr_latch_ex;
     wire [31 : 0] sig_extended_latch_ex;
     wire [31 : 0] rs_reg_latch_ex;
     wire [31 : 0] rt_reg_latch_ex;
@@ -132,6 +134,7 @@ module MIPS(
     Latch_IF_ID u_latch_if_id(
                             .clk(clk),
                             .rst(rst),
+                            .is_jump_taken(bus_taken),
                             .i_pc(pc_if_latch),
                             .i_instruction(instruction_if_latch),
                             .is_write_IF_ID(bus_write_IF_ID),
@@ -150,6 +153,7 @@ module MIPS(
                             .is_ID_EX_MemRead(MemRead_latch_ex),
                             .o_rt_addr(rt_addr_id_latch),
                             .o_rd_addr(rd_addr_id_latch),
+                            .o_rs_addr(rs_addr_id_latch),
                             .o_sig_extended(sig_extended_id_latch),
                             .o_rs_reg(rs_reg_id_latch),
                             .o_rt_reg(rt_reg_id_latch),
@@ -172,8 +176,10 @@ module MIPS(
     Latch_ID_EX u_latch_id_ex(
                             .clk(clk),
                             .rst(rst),
+                            .is_jump_taken(bus_taken),
                             .i_rt_addr(rt_addr_id_latch),
                             .i_rd_addr(rd_addr_id_latch),
+                            .i_rs_addr(rs_addr_id_latch),
                             .i_sig_extended(sig_extended_id_latch),
                             .i_rs_reg(rs_reg_id_latch),
                             .i_rt_reg(rt_reg_id_latch),
@@ -192,6 +198,7 @@ module MIPS(
                             .is_stall(stall_id_latch),
                             .o_rt_addr(rt_addr_latch_ex),
                             .o_rd_addr(rd_addr_latch_ex),
+                            .o_rs_addr(rs_addr_latch_ex),
                             .o_sig_extended(sig_extended_latch_ex),
                             .o_rs_reg(rs_reg_latch_ex),
                             .o_rt_reg(rt_reg_latch_ex),
@@ -230,6 +237,13 @@ module MIPS(
                             .is_shmat(shmat_latch_ex),
                             .is_load_store_type(load_store_latch_id),
                             .is_stall(stall_latch_ex),
+                            .i_rs_addr(rs_addr_latch_ex),
+                            .i_EX_MEM_RegWrite(RegWrite_latch_mem),
+                            .i_EX_MEM_Rd(addr_reg_dst_latch_mem),
+                            .i_MEM_WB_RegWrite(RegWrite_latch_wb),
+                            .i_MEM_WB_Rd(addr_reg_dst_latch_wb),
+                            .i_MEM_WB_reg(bus_reg_dst),
+                            .i_EX_MEM_reg(ALU_res_latch_mem),
                             .o_jump(jump_ex_latch),
                             .o_pc_to_reg(pc_to_reg_ex_latch),
                             .o_ALU_res(ALU_res_ex_latch),
@@ -237,7 +251,7 @@ module MIPS(
                             .o_addr_reg_dst(addr_reg_dst_ex_latch),
                             .os_write_pc(write_pc_ex_latch),
                             .os_taken(taken_ex_latch),
-                            .os_select_addr_reg(select_addr_reg_ex_latch),
+                            //.os_select_addr_reg(select_addr_reg_ex_latch),
                             .os_RegWrite(RegWrite_ex_latch),
                             .os_MemtoReg(MemtoReg_ex_latch),
                             .os_MemWrite(MemWrite_ex_latch),
@@ -247,6 +261,7 @@ module MIPS(
     Latch_EX_MEM u_latch_ex_mem(
                            .clk(clk),
                            .rst(rst),
+                           .is_jump_taken(bus_taken),
                            .i_jump(jump_ex_latch),
                            .i_pc_to_reg(pc_to_reg_ex_latch),
                            .i_ALU_res(ALU_res_ex_latch),
@@ -254,7 +269,7 @@ module MIPS(
                            .i_addr_reg_dst(addr_reg_dst_ex_latch),
                            .is_write_pc(write_pc_ex_latch),
                            .is_taken(taken_ex_latch),
-                           .is_select_addr_reg(select_addr_reg_ex_latch),
+                           //.is_select_addr_reg(select_addr_reg_ex_latch),
                            .is_RegWrite(RegWrite_ex_latch),
                            .is_MemtoReg(MemtoReg_ex_latch),
                            .is_MemWrite(MemWrite_ex_latch),
@@ -267,7 +282,7 @@ module MIPS(
                            .o_addr_reg_dst(addr_reg_dst_latch_mem),
                            .os_write_pc(write_pc_latch_mem),
                            .os_taken(bus_taken),
-                           .os_select_addr_reg(select_addr_reg_latch_mem),
+                           //.os_select_addr_reg(select_addr_reg_latch_mem),
                            .os_RegWrite(RegWrite_latch_mem),
                            .os_MemtoReg(MemtoReg_latch_mem),
                            .os_MemWrite(MemWrite_latch_mem),
@@ -282,7 +297,7 @@ module MIPS(
                            .i_addr_reg_dst(addr_reg_dst_latch_mem),
                            .i_pc_to_reg(pc_to_reg_latch_me),
                            .is_write_pc(write_pc_latch_mem),
-                           .is_select_addr_reg(select_addr_reg_latch_mem),
+                           //.is_select_addr_reg(select_addr_reg_latch_mem),
                            .is_RegWrite(RegWrite_latch_mem), 
                            .is_MemtoReg(MemtoReg_latch_mem),
                            .is_MemWrite(MemWrite_latch_mem), 
@@ -292,7 +307,7 @@ module MIPS(
                            .o_ALU_res(ALU_res_mem_latch),   
                            .o_addr_reg_dst(addr_reg_dst_mem_latch), 
                            .o_pc_to_reg(pc_to_reg_mem_latch),
-                           .os_select_addr_reg(select_addr_reg_mem_latch),
+                           //.os_select_addr_reg(select_addr_reg_mem_latch),
                            .os_write_pc(write_pc_mem_latch),
                            .os_RegWrite(RegWrite_mem_latch), 
                            .os_MemtoReg(MemtoReg_mem_latch)  
@@ -307,13 +322,13 @@ module MIPS(
                            .i_pc_to_reg(pc_to_reg_mem_latch),
                            .is_RegWrite(RegWrite_mem_latch),
                            .is_MemtoReg(MemtoReg_mem_latch),
-                           .is_select_addr_reg(select_addr_reg_mem_latch),
+                           //.is_select_addr_reg(select_addr_reg_mem_latch),
                            .is_write_pc(write_pc_mem_latch),
                            .o_output_mem(output_mem_latch_wb),
                            .o_ALU_res(ALU_res_latch_wb),
                            .o_addr_reg_dst(addr_reg_dst_latch_wb),
                            .o_pc_to_reg(pc_to_reg_latch_wb),
-                           .os_select_addr_reg(select_addr_reg_latch_wb),
+                           //.os_select_addr_reg(select_addr_reg_latch_wb),
                            .os_write_pc(write_pc_latch_wb),
                            .os_RegWrite(RegWrite_latch_wb),
                            .os_MemtoReg(MemtoReg_latch_wb)
@@ -326,7 +341,7 @@ module MIPS(
                            .i_pc_to_reg(pc_to_reg_latch_wb),
                            .is_RegWrite(RegWrite_latch_wb),
                            .is_MemtoReg(MemtoReg_latch_wb),
-                           .is_select_addr_reg(select_addr_reg_latch_wb),
+                           //.is_select_addr_reg(select_addr_reg_latch_wb),
                            .is_write_pc(write_pc_latch_wb),
                            .o_reg_dst(bus_reg_dst),
                            .o_addr_reg_dst(bus_addr_reg_dst),

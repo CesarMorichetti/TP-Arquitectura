@@ -3,6 +3,7 @@
 module Latch_EX_MEM(
                 input wire          rst,
                 input wire          clk,
+                input wire          is_jump_taken,//limpia en caso de salto
                 input wire [31 : 0] i_jump,//direccion a saltar
                 input wire [31 : 0] i_pc_to_reg,
                 input wire [31 : 0] i_ALU_res,
@@ -11,7 +12,7 @@ module Latch_EX_MEM(
                                                    //registros a escribir
                 input wire          is_write_pc,
                 input wire          is_taken,
-                input wire          is_select_addr_reg,
+                //input wire          is_select_addr_reg,
                 input wire          is_RegWrite,
                 input wire          is_MemtoReg,
                 input wire          is_MemWrite,
@@ -25,7 +26,7 @@ module Latch_EX_MEM(
                                                   //registros a escribir
                 output reg          os_write_pc,
                 output reg          os_taken,
-                output reg          os_select_addr_reg,
+                //output reg          os_select_addr_reg,
                 output reg          os_RegWrite,
                 output reg          os_MemtoReg,
                 output reg          os_MemWrite,
@@ -36,7 +37,7 @@ module Latch_EX_MEM(
 
 
     always@(posedge clk)begin
-        if(~rst)begin
+        if(~rst || is_jump_taken)begin
             o_jump              <= 0;
             o_pc_to_reg         <= 0;
             o_ALU_res           <= 0;
@@ -44,7 +45,7 @@ module Latch_EX_MEM(
             o_addr_reg_dst      <= 0;
             os_write_pc         <= 0;
             os_taken            <= 0;
-            os_select_addr_reg  <= 0;
+            //os_select_addr_reg  <= 0;
             os_RegWrite         <= 0;
             os_MemtoReg         <= 0;
             os_MemWrite         <= 0;              
@@ -59,7 +60,7 @@ module Latch_EX_MEM(
             o_addr_reg_dst      <= i_addr_reg_dst;
             os_write_pc         <= is_write_pc;
             os_taken            <= is_taken;
-            os_select_addr_reg  <= is_select_addr_reg;
+            //os_select_addr_reg  <= is_select_addr_reg;
             os_RegWrite         <= is_RegWrite;
             os_MemtoReg         <= is_MemtoReg;
             os_MemWrite         <= is_MemWrite;              
