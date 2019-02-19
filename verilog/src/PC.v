@@ -5,6 +5,7 @@ module PC(
 	input   wire rst,
     input   wire i_PC_write,
 	input   wire [31:0] i_PC,
+    input   wire        i_step,
 	output  wire [31:0] o_PC
     );
     
@@ -15,7 +16,7 @@ module PC(
             PC_temp <= 32'b00000000000000000000000000000000;  
         end
         else begin 
-            if(i_PC_write) begin
+            if(i_PC_write && i_step) begin
                 PC_temp <= i_PC;
             end
             else begin 

@@ -2,6 +2,7 @@
 module MIPS(
             input  wire          clk,
             input  wire          rst,
+            input  wire          i_step,
             output wire [31 : 0] o_resultado,
             output wire [4  : 0] o_direccion
             );
@@ -123,6 +124,7 @@ module MIPS(
    Stage_Fetch u_Stege_Fetch(
                             .clk(clk),
                             .rst(rst),
+                            .i_step(i_step),
                             .i_taken(bus_taken),
                             .i_branch_address(bus_jump),
                             .i_PC_write(bus_PC_write),
@@ -134,6 +136,7 @@ module MIPS(
     Latch_IF_ID u_latch_if_id(
                             .clk(clk),
                             .rst(rst),
+                            .i_step(i_step),
                             .is_jump_taken(bus_taken),
                             .i_pc(pc_if_latch),
                             .i_instruction(instruction_if_latch),
@@ -176,6 +179,7 @@ module MIPS(
     Latch_ID_EX u_latch_id_ex(
                             .clk(clk),
                             .rst(rst),
+                            .i_step(i_step),
                             .is_jump_taken(bus_taken),
                             .i_rt_addr(rt_addr_id_latch),
                             .i_rd_addr(rd_addr_id_latch),
@@ -261,6 +265,7 @@ module MIPS(
     Latch_EX_MEM u_latch_ex_mem(
                            .clk(clk),
                            .rst(rst),
+                           .i_step(i_step),
                            .is_jump_taken(bus_taken),
                            .i_jump(jump_ex_latch),
                            .i_pc_to_reg(pc_to_reg_ex_latch),
@@ -316,6 +321,7 @@ module MIPS(
     Latch_MEM_WB u_latch_mem_wb(
                            .clk(clk),
                            .rst(rst),
+                           .i_step(i_step),
                            .i_output_mem(output_mem_mem_latch),
                            .i_ALU_res(ALU_res_mem_latch),
                            .i_addr_reg_dst(addr_reg_dst_mem_latch),

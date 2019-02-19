@@ -3,6 +3,7 @@
 module Latch_IF_ID(
     input wire clk,
     input wire rst,
+    input wire i_step,
     input wire          is_jump_taken,//Señal que limpia si se toma un salto
     input wire [31 : 0] i_pc,
     input wire [31 : 0] i_instruction,
@@ -19,7 +20,7 @@ module Latch_IF_ID(
             o_pc          <= 0;
         end
         else begin
-            if(is_write_IF_ID)begin
+            if(is_write_IF_ID && i_step)begin
                 o_pc          <= i_pc;
                 o_instruction <= i_instruction;
             end

@@ -3,6 +3,7 @@
 module Latch_EX_MEM(
                 input wire          rst,
                 input wire          clk,
+                input wire          i_step,
                 input wire          is_jump_taken,//limpia en caso de salto
                 input wire [31 : 0] i_jump,//direccion a saltar
                 input wire [31 : 0] i_pc_to_reg,
@@ -53,19 +54,21 @@ module Latch_EX_MEM(
             os_load_store_type  <= 0;
         end
         else begin
-            o_jump              <= i_jump;
-            o_pc_to_reg         <= i_pc_to_reg;
-            o_ALU_res           <= i_ALU_res;
-            o_rt_reg            <= i_rt_reg;
-            o_addr_reg_dst      <= i_addr_reg_dst;
-            os_write_pc         <= is_write_pc;
-            os_taken            <= is_taken;
-            //os_select_addr_reg  <= is_select_addr_reg;
-            os_RegWrite         <= is_RegWrite;
-            os_MemtoReg         <= is_MemtoReg;
-            os_MemWrite         <= is_MemWrite;              
-            os_MemRead          <= is_MemRead; 
-            os_load_store_type  <= is_load_store_type;
+            if(i_step) begin
+                o_jump              <= i_jump;
+                o_pc_to_reg         <= i_pc_to_reg;
+                o_ALU_res           <= i_ALU_res;
+                o_rt_reg            <= i_rt_reg;
+                o_addr_reg_dst      <= i_addr_reg_dst;
+                os_write_pc         <= is_write_pc;
+                os_taken            <= is_taken;
+                //os_select_addr_reg  <= is_select_addr_reg;
+                os_RegWrite         <= is_RegWrite;
+                os_MemtoReg         <= is_MemtoReg;
+                os_MemWrite         <= is_MemWrite;              
+                os_MemRead          <= is_MemRead; 
+                os_load_store_type  <= is_load_store_type;
+            end
         end
     end
 endmodule

@@ -3,6 +3,7 @@
 module Latch_ID_EX(
     input wire clk,
     input wire rst,
+    input wire i_step,
     input wire          is_jump_taken,//limpia en caso de salto
     input wire [4  : 0] i_rt_addr,
     input wire [4  : 0] i_rd_addr,
@@ -68,25 +69,27 @@ module Latch_ID_EX(
             os_stall            <= 0;
         end
         else begin
-            o_rt_addr           <= i_rt_addr;
-            o_rd_addr           <= i_rd_addr;
-            o_rs_addr           <= i_rs_addr;
-            o_sig_extended      <= i_sig_extended;
-            o_rs_reg            <= i_rs_reg;
-            o_rt_reg            <= i_rt_reg;
-            o_pc                <= i_pc;
-            o_jump_address      <= i_jump_address;
-            os_RegDst           <= is_RegDst;
-            os_MemRead          <= is_MemRead;
-            os_MemWrite         <= is_MemWrite;
-            os_MemtoReg         <= is_MemtoReg;
-            os_ALUop            <= is_ALUop;
-            os_ALUsrc           <= is_ALUsrc;
-            os_RegWrite         <= is_RegWrite;
-            os_shmat            <= is_shmat;
-            os_load_store_type  <= is_load_store_type;
-            o_op                <= i_op;
-            os_stall            <= is_stall;
+            if(i_step)begin
+                o_rt_addr           <= i_rt_addr;
+                o_rd_addr           <= i_rd_addr;
+                o_rs_addr           <= i_rs_addr;
+                o_sig_extended      <= i_sig_extended;
+                o_rs_reg            <= i_rs_reg;
+                o_rt_reg            <= i_rt_reg;
+                o_pc                <= i_pc;
+                o_jump_address      <= i_jump_address;
+                os_RegDst           <= is_RegDst;
+                os_MemRead          <= is_MemRead;
+                os_MemWrite         <= is_MemWrite;
+                os_MemtoReg         <= is_MemtoReg;
+                os_ALUop            <= is_ALUop;
+                os_ALUsrc           <= is_ALUsrc;
+                os_RegWrite         <= is_RegWrite;
+                os_shmat            <= is_shmat;
+                os_load_store_type  <= is_load_store_type;
+                o_op                <= i_op;
+                os_stall            <= is_stall;
+            end
         end
     end
 

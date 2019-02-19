@@ -2,6 +2,7 @@
 module Stage_Fetch(
     input   wire            clk,
 	input   wire            rst,
+    input   wire            i_step,
 	//Entradas a la etapa desde etapa MEM
 	//input   wire            i_MUX_branch_selector,
     //input   wire            i_MUX_jump_selector,
@@ -43,6 +44,7 @@ module Stage_Fetch(
     PC     u_PC(
             .clk(clk),
             .rst(rst),
+            .i_step(i_step),
             .i_PC_write(i_PC_write),
             .i_PC(bus2),
             .o_PC(bus3)
