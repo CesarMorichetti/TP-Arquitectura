@@ -14,7 +14,7 @@ module tb_MIPS();
         rst        = 1;
     end
 
-    always #1 clk = ~clk;   
+    always #10 clk = ~clk;   
     
     MIPS u_mips(            
     .clk(clk),
