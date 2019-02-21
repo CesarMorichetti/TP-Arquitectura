@@ -48,15 +48,15 @@ def reg_decode(func_type, instr, regs):
     if func_type == "r":
 
         #special case for MIPS shifts
-        if (instr == "sll") or (instr == "srl"):
+        if (instr == "sll") or (instr == "srl") or (instr == "sra"):
             try:
                #return[rs,        rt,               rd,             shamt]
                return [0, registers[regs[1]], registers[regs[0]], int(regs[2])]
             except:
                 return None
 
-        #special case for MIPS jr
-        if (instr == "jr"):
+        #special case for MIPS jalr
+        if (instr == "jalr"):
             try:
                 #return[        rs,        rt, rd,shamt]
                 return [registers[regs[0]], 0, 0, 0]
@@ -103,14 +103,27 @@ def reg_decode(func_type, instr, regs):
             except:
                 return None
 
+        if (instr == "lb") or (instr == "lbu"):
+            try:
+                if len(regs[1]) > 1 and regs[1][1] == "x" :
+                    imm = int(regs[1], base=16)
+                    
+                else:
+                    imm = int(regs[1])
+                    
+                #return[        rs                 rt             immediate ]
+                return [registers[regs[2]], registers[regs[0]], imm]
+            except:
+                return None
 
         #standard i-type MIPS instructions
         try:
-            if len(regs[2]) > 1 and regs[2][1] == "x":
+            if len(regs[2]) > 1 and regs[2][1] == "x" :
                 imm = int(regs[2], base=16)
+                
             else:
                 imm = int(regs[2])
-
+                
             #return[        rs                 rt             immediate ]
             return [registers[regs[1]], registers[regs[0]], imm]
         except:

@@ -52,7 +52,7 @@ def instr_decode(instr):
         opcode = 0x3
         funct = None
 
-    elif instr == "jr":
+    elif instr == "jalr":
         func_type = "r"
         opcode = 0
         funct = 0x8
@@ -60,6 +60,11 @@ def instr_decode(instr):
     elif instr == "lbu":
         func_type = "i"
         opcode = 0x24
+        funct = None
+
+    elif instr == "lb":
+        func_type = "i"
+        opcode = 0x20
         funct = None
 
     elif instr == "lhu":
@@ -126,6 +131,11 @@ def instr_decode(instr):
         func_type = "r"
         opcode = 0
         funct = 0x02
+
+    elif instr == "sra":
+        func_type = "r"
+        opcode = 0
+        funct = 0x03
 
     elif instr == "sb":
         func_type = "i"

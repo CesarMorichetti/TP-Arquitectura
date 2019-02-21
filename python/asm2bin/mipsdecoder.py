@@ -38,6 +38,7 @@ def convert(code):
         #print("Formatted binary: "+opcode+"|"+rs+"|"+rt+"|"+rd+"|"+shamt+"|"+funct)
         binary = opcode+rs+rt+rd+shamt+funct
         print(binary)
+        return binary
 
     #execution for i-type functions
     elif func_type == "i": #("Instruction form: opcode|  rs |  rt |   immediate      ")
@@ -48,6 +49,7 @@ def convert(code):
         #print("Formatted binary: " + opcode+"|"+rs+"|"+rt+"|"+imm)
         binary = opcode+rs+rt+imm
         print(binary)
+        return binary
 
     #execution for j-type functions
     elif func_type == "j": #("Instruction form: opcode|          immediate           ")
@@ -56,9 +58,11 @@ def convert(code):
         #print("Formatted binary: " + opcode+"|"+imm)
         binary = opcode+imm
         print(binary)
+        return binary
 
     elif func_type == "nop":
         print("00000000000000000000000000000000")
+        return "00000000000000000000000000000000"
 
     else:
         print("Instruccion no valida")
@@ -67,13 +71,18 @@ def convert(code):
     return
 
 # main
-#os.system("clear")
 
-i = 1
-for linea in open("instAsm.asm", "r"):
-    #print(str(i)+" ")
+fileIn = raw_input("[Entrada] Ingresa nombre sin extension [.asm]: ")
+fileOut = raw_input("[Salida] Ingresa nombre sin extension [.mem]: ")
+
+r = open(fileIn + ".asm", "r")
+f = open(fileOut + ".mem","w+")
+lineas = r.readlines()
+for linea in lineas:
     linea = linea[:-1]
-    #print (linea)
-    convert(linea)
-    i += 1
-    #print("--------------------------------------------------------------------------------")
+    salida = convert(linea)
+    salida = str(salida) + "\n"
+    f.write(salida)
+
+r.close()
+f.close()
