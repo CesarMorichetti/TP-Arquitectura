@@ -1,6 +1,6 @@
 MIPSDecode
 ====================
-#### Lee desde archivo instAsm.asm
+#### Lee y escribe archivo indicado en ejecucion
 
 ### Formato de archivo:
 ~~~~
