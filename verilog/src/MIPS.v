@@ -3,8 +3,10 @@ module MIPS(
             input  wire          clk,
             input  wire          rst,
             input  wire          i_step,
-            output wire [31 : 0] o_resultado,
-            output wire [4  : 0] o_direccion
+            input  wire          i_program_memory_write,
+            input  wire [31 : 0] i_instruction_write,
+            input  wire [7  : 0] i_address_write,
+            output wire [2553 : 0] o_to_debug
             );
     //internos
     //---Estos son las salidas de la etapa Ex a la etapa decode y la etapa
@@ -120,11 +122,19 @@ module MIPS(
    wire [31 : 0] pc_to_reg_latch_wb;
    wire          select_addr_reg_latch_wb;
    wire          write_pc_latch_wb;
+
+
+   //buses to debug unit
+   wire [1023 : 0] bus_register_to_debug;
+   wire [1023 : 0] bus_data_to_debug;
    //Stage Fetch
    Stage_Fetch u_Stege_Fetch(
                             .clk(clk),
                             .rst(rst),
                             .i_step(i_step),
+                            .i_program_memory_write(i_program_memory_write),
+                            .i_instruction_write(i_instruction_write),
+                            .i_address_write(i_address_write),
                             .i_taken(bus_taken),
                             .i_branch_address(bus_jump),
                             .i_PC_write(bus_PC_write),
@@ -174,7 +184,8 @@ module MIPS(
                             .o_op(op_id_latch),
                             .os_pc_write(bus_PC_write),
                             .os_write_IF_ID(bus_write_IF_ID),
-                            .os_stall(stall_id_latch)
+                            .os_stall(stall_id_latch),
+                            .o_register_to_debug(bus_register_to_debug)
                             );
     Latch_ID_EX u_latch_id_ex(
                             .clk(clk),
@@ -315,7 +326,8 @@ module MIPS(
                            //.os_select_addr_reg(select_addr_reg_mem_latch),
                            .os_write_pc(write_pc_mem_latch),
                            .os_RegWrite(RegWrite_mem_latch), 
-                           .os_MemtoReg(MemtoReg_mem_latch)  
+                           .os_MemtoReg(MemtoReg_mem_latch),  
+                           .o_data_to_debug(bus_data_to_debug)
                           );
 
     Latch_MEM_WB u_latch_mem_wb(
@@ -354,6 +366,25 @@ module MIPS(
                            .os_RegWrite(bus_RegWrite)
                            );
 
-    assign o_resultado = bus_reg_dst;
-    assign o_direccion = bus_addr_reg_dst;
+    assign o_to_debug = {pc_latch_id, instruction_if_latch,
+
+                         bus_register_to_debug,
+    
+                         rt_addr_latch_ex, rd_addr_latch_ex, rs_addr_latch_ex, sig_extended_latch_ex,
+                         rs_reg_latch_ex, rt_reg_latch_ex, pc_latch_ex, jump_address_latch_ex,
+                         op_latch_ex, RegDst_latch_ex, MemRead_latch_ex, MemWrite_latch_ex,
+                         MemtoReg_latch_ex, ALUop_latch_ex, ALUsrc_latch_ex, RegWrite_latch_ex,
+                         shmat_latch_ex, load_store_latch_id, stall_latch_ex,
+
+                         bus_jump, pc_to_reg_latch_me, ALU_res_latch_mem, rt_reg_latch_mem, 
+                         addr_reg_dst_latch_mem, write_pc_latch_mem, bus_taken, RegWrite_latch_mem,
+                         MemtoReg_latch_mem, MemWrite_latch_mem, MemRead_latch_mem,
+                         load_store_type_latch_mem,
+
+                         bus_data_to_debug,
+
+                         output_mem_latch_wb, ALU_res_latch_wb, addr_reg_dst_latch_wb,
+                         pc_to_reg_latch_wb, write_pc_latch_wb, RegWrite_latch_wb,
+                         MemtoReg_latch_wb
+                         };
 endmodule   

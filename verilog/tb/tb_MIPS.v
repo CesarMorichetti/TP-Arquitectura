@@ -4,8 +4,7 @@ module tb_MIPS();
     reg          rst;
     reg          step;
 
-    wire [31 : 0] o_resultado;
-    wire [4  : 0] o_direccion;
+    wire [2553 : 0] o_to_debug;
 
     initial begin
         clk = 0;
@@ -13,13 +12,15 @@ module tb_MIPS();
         
         #100
         rst  = 1;
+        
         #100
         step = 1;
+        /*
         #40
         step = 0;
         #100
         step = 1;
-
+*/
     end
 
     always #10 clk = ~clk;   
@@ -28,8 +29,7 @@ module tb_MIPS();
     .clk(clk),
     .rst(rst),
     .i_step(step),
-    .o_resultado(o_resultado),
-    .o_direccion(o_direccion)
+    .o_to_debug(o_to_debug)
     );
 
 endmodule

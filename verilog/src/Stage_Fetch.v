@@ -3,6 +3,11 @@ module Stage_Fetch(
     input   wire            clk,
 	input   wire            rst,
     input   wire            i_step,
+    //para escribir program memory
+    input   wire            i_program_memory_write,
+    input   wire [31 : 0]   i_instruction_write,
+    input   wire [7  : 0]   i_address_write,
+
 	//Entradas a la etapa desde etapa MEM
 	//input   wire            i_MUX_branch_selector,
     //input   wire            i_MUX_jump_selector,
@@ -59,9 +64,9 @@ module Stage_Fetch(
     //instruction_memory
     BRAM u_instruction_memory(
                         .clk(clk),
-                        .i_w_enable(0),
-                        .i_address(bus3[7:0]),
-                        .i_data('h00000000),
+                        .i_w_enable(i_program_memory_write),
+                        .i_address(i_address_write),
+                        .i_data(i_instruction_write),
                         .o_data(bus4)
                         );
 
