@@ -8,9 +8,11 @@ module Stage_WriteBack(
                       input  wire          is_MemtoReg,
                       //input  wire          is_select_addr_reg,
                       input  wire          is_write_pc,
+                      input  wire          is_stop_pipe,
                       output wire [31 : 0] o_reg_dst,
                       output wire [4  : 0] o_addr_reg_dst,
-                      output wire          os_RegWrite
+                      output wire          os_RegWrite,
+                      output  wire          os_stop_pipe
                       );
 
     wire [31 : 0] bus_data_wb;
@@ -40,4 +42,5 @@ module Stage_WriteBack(
 
     assign os_RegWrite    = is_RegWrite;
     assign o_addr_reg_dst = i_addr_reg_dst;
+    assign os_stop_pipe = is_stop_pipe;
 endmodule

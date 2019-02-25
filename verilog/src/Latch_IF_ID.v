@@ -7,10 +7,12 @@ module Latch_IF_ID(
     input wire          is_jump_taken,//Señal que limpia si se toma un salto
     input wire [31 : 0] i_pc,
     input wire [31 : 0] i_instruction,
+    input wire          is_stop_pipe,
     input wire          is_write_IF_ID,//en caso deun load este se tiene que 
                                        //detener un ciclo
     output reg [31 : 0] o_pc,
-    output reg [31 : 0] o_instruction
+    output reg [31 : 0] o_instruction,
+    output reg          os_stop_pipe
     );
     
     always@(posedge clk)
@@ -18,11 +20,13 @@ module Latch_IF_ID(
         if(~rst || is_jump_taken)begin
             o_instruction <= 0;
             o_pc          <= 0;
+            os_stop_pipe  <= 0;
         end
         else begin
             if(is_write_IF_ID && i_step)begin
                 o_pc          <= i_pc;
                 o_instruction <= i_instruction;
+                os_stop_pipe  <= is_stop_pipe;
             end
         end
     end

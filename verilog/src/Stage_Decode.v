@@ -9,6 +9,7 @@ module Stage_Decode(
                     //desde Fetch
                     input wire  [31 : 0] i_pc,
                     input wire  [31 : 0] i_instruction,
+                    input wire           is_stop_pipe,
                     //para la hazard unit
                     input wire  [4  : 0] i_ID_EX_rt,
                     input wire           is_ID_EX_MemRead,
@@ -37,6 +38,7 @@ module Stage_Decode(
                     output wire          os_write_IF_ID,//esta no entra al latch
                     output wire          os_stall,//esta si es la señal para meter
                                                 //burbuja en las señales de salto
+                    output wire          os_stop_pipe,
                     output wire [1023 : 0] o_register_to_debug
 );
 
@@ -145,4 +147,5 @@ module Stage_Decode(
     assign o_jump_address = jump_address;
     assign o_op = op;
     assign os_stall = bus_mux_control;
+    assign os_stop_pipe = is_stop_pipe;
 endmodule

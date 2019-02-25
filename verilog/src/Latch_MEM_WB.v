@@ -11,6 +11,7 @@ module Latch_MEM_WB(
                 input  wire          is_MemtoReg,
                 //input  wire          is_select_addr_reg,
                 input  wire          is_write_pc,
+                input  wire          is_stop_pipe,
                 output reg [31 : 0]  o_output_mem,
                 output reg [31 : 0]  o_ALU_res,
                 output reg [4  : 0]  o_addr_reg_dst,
@@ -18,7 +19,8 @@ module Latch_MEM_WB(
                 //output reg           os_select_addr_reg,
                 output reg           os_write_pc,
                 output reg           os_RegWrite,
-                output reg           os_MemtoReg
+                output reg           os_MemtoReg,
+                output reg           os_stop_pipe
                    );
                    
     always@(posedge clk)begin
@@ -30,6 +32,7 @@ module Latch_MEM_WB(
             os_RegWrite         <= 0;
             os_MemtoReg         <= 0;
             os_write_pc         <= 0;
+            os_stop_pipe        <= 0;
             //os_select_addr_reg  <= 0;
         end
         else begin
@@ -41,6 +44,7 @@ module Latch_MEM_WB(
                 os_RegWrite         <= is_RegWrite;
                 os_MemtoReg         <= is_MemtoReg;
                 os_write_pc         <= is_write_pc;
+                os_stop_pipe        <= is_stop_pipe;
                 //os_select_addr_reg  <= is_select_addr_reg;
             end
 
