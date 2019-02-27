@@ -5,9 +5,9 @@ module tb_Toplevel();
     reg rst;
     reg clk;
     reg i_rx_done;
+    reg i_tx_done;
     reg [7 : 0] i_data;
 
-    wire [2553 : 0] o_output_mips;
     wire [7    : 0] o_data_send;
     wire            o_tx_start;
 
@@ -16,10 +16,12 @@ module tb_Toplevel();
         clk = 0;
         rst = 0;
         i_rx_done = 0;
+        i_tx_done = 0;
         i_data = 0;
 
         #100
         rst = 1;
+        /*
         //Elijo estado load 
         i_rx_done = 1;
         i_data = 8'b00000001;
@@ -88,8 +90,15 @@ module tb_Toplevel();
         i_data = 8'b11111111;
         #20
         i_rx_done = 0;
-
-
+    */
+    //Elijo estado fast 
+            i_rx_done = 1;
+            i_data = 8'b00000011;
+            #20
+            i_rx_done = 0;
+            
+            #700
+            i_tx_done = 1;
     end
 
     always #10 clk = ~clk;
@@ -98,9 +107,12 @@ module tb_Toplevel();
              .clk(clk),
              .rst(rst),
              .i_rx_done(i_rx_done),
+             .i_tx_done(i_tx_done),
              .i_data(i_data),
-             .o_output_mips(o_output_mips),
              .o_data_send(o_data_send),
              .o_tx_start(o_tx_start)
              );
+
+             
+             
 endmodule

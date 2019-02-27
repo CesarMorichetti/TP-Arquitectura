@@ -63,7 +63,7 @@ module Stage_Fetch(
             );
 
     //MUX para determinar si el address es del debug o del pc
-    MUX2to1 #(.LEN(32))
+    MUX2to1 #(.LEN(8))
             u_MUX_memory_address(
             .i_selector(i_program_memory_write),
             .i_entradaMUX_0(bus3[7:0]),

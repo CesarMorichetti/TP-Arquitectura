@@ -6,7 +6,7 @@ module MIPS(
             input  wire          i_program_memory_write,
             input  wire [31 : 0] i_instruction_write,
             input  wire [7  : 0] i_address_write,
-            output wire [2553 : 0] o_to_debug,
+            output wire [2557 : 0] o_to_debug,
             output wire            o_stop_signal
             );
     //internos
@@ -404,7 +404,7 @@ module MIPS(
                            .os_stop_pipe(bus_stop_pipe)
                            );
 
-    assign o_to_debug = {pc_latch_id, instruction_if_latch,
+    assign o_to_debug = {pc_latch_id, instruction_if_latch, stop_pipe_latch_id,
 
                          bus_register_to_debug,
 
@@ -412,18 +412,18 @@ module MIPS(
                          rs_reg_latch_ex, rt_reg_latch_ex, pc_latch_ex, jump_address_latch_ex,
                          op_latch_ex, RegDst_latch_ex, MemRead_latch_ex, MemWrite_latch_ex,
                          MemtoReg_latch_ex, ALUop_latch_ex, ALUsrc_latch_ex, RegWrite_latch_ex,
-                         shmat_latch_ex, load_store_latch_id, stall_latch_ex,
+                         shmat_latch_ex, load_store_latch_id, stall_latch_ex, stop_pipe_latch_ex,
 
                          bus_jump, pc_to_reg_latch_me, ALU_res_latch_mem, rt_reg_latch_mem, 
                          addr_reg_dst_latch_mem, write_pc_latch_mem, bus_taken, RegWrite_latch_mem,
                          MemtoReg_latch_mem, MemWrite_latch_mem, MemRead_latch_mem,
-                         load_store_type_latch_mem,
+                         load_store_type_latch_mem, stop_pipe_latch_mem,
 
                          bus_data_to_debug,
 
                          output_mem_latch_wb, ALU_res_latch_wb, addr_reg_dst_latch_wb,
                          pc_to_reg_latch_wb, write_pc_latch_wb, RegWrite_latch_wb,
-                         MemtoReg_latch_wb
+                         MemtoReg_latch_wb, stop_pipe_latch_wb
                          };
     assign o_stop_signal = bus_MUX_stop_pipe; 
 endmodule   
