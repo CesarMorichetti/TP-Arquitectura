@@ -1,40 +1,59 @@
 `timescale 1ns / 1ps
 
+
 module data_memory(
-    // INPUTS
-    input wire clk,
-    input wire rst,
-    input wire [31:0] i_address,    //Entrada proveniente del latch 3 EX/MEM
-    input wire [31:0] i_write_data, //Entrada proveniente del latch 3 EX/MEM
-    // Control MEM
-    input wire i_MemRead,
-    input wire i_MemWrite,
-    
-    // OUTPUTS
-    output reg [31:0] o_read_data, //Entrada proveniente del latch 3 EX/
+        input wire clk,
+        input wire i_Read,
+        input wire i_wenable,
+        input wire [4:0] i_address,
+        input wire [31:0] i_data,
+        output reg [31:0] o_data,
+        output wire [1023 : 0] o_data_to_debug
     );
-    
-	parameter DATA_BITS = 32;
-	parameter ADDR_BITS = 32;
-	
-	//-- Memoria
-    reg [DATA_BITS-1:0] ram [0:31];	// Memoria de 2K. 
-	integer i;
-	
-	//Escritura
-	always@(posedge clk)
-	   if(~rst) begin
-	       for(i = 0; i<32; i=i+1)
-               ram[i] <= i; 
-	       end    
-	   else 
-           if(in_MemWrite) begin
-               ram[i_address] <= i_write_data; 	     // Escribe el dato entrante en la RAM.
-           end
-        
-    //Lectura
-    always @(negedge clk)    
-       if(i_MemRead) begin
-           o_read_data <= ram[i_address];         // Lee la RAM y envia el dato a la salida.       
-       end
+    reg [31:0]memory[0:31];
+    initial begin
+        $readmemb("clear_register.mem", memory);
+    end
+
+    always@(posedge clk) begin
+        if(i_wenable) begin
+            memory[i_address] <= i_data;
+        end
+    end
+    always@(negedge clk) begin
+        o_data <= memory[i_address];
+    end
+
+    assign o_data_to_debug = { memory[0],
+                               memory[1],
+                               memory[2],
+                               memory[3],
+                               memory[4],
+                               memory[5],
+                               memory[6],
+                               memory[7],
+                               memory[8],
+                               memory[9],
+                               memory[10],
+                               memory[11],
+                               memory[12],
+                               memory[13],
+                               memory[14],
+                               memory[15],
+                               memory[16],
+                               memory[17],
+                               memory[18],
+                               memory[19],
+                               memory[20],
+                               memory[21],
+                               memory[22],
+                               memory[23],
+                               memory[24],
+                               memory[25],
+                               memory[26],
+                               memory[27],
+                               memory[28],
+                               memory[29],
+                               memory[30],
+                               memory[31]};
 endmodule

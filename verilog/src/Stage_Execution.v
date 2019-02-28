@@ -21,6 +21,7 @@ module Stage_Execution(
                 input  wire          is_shmat,
                 input  wire [2  : 0] is_load_store_type,
                 input  wire          is_stall,
+                input  wire          is_stop_pipe,
                 //para forward unit
                 input  wire [4  : 0] i_rs_addr,
                 input  wire          i_EX_MEM_RegWrite,
@@ -46,6 +47,7 @@ module Stage_Execution(
                 output wire          os_MemtoReg,
                 output wire          os_MemWrite,
                 output wire          os_MemRead,
+                output wire          os_stop_pipe,
                 output wire [2  : 0] os_load_store_type
                 );
     wire [31 : 0] bus_input_A_ALU;
@@ -173,4 +175,5 @@ module Stage_Execution(
     assign os_MemWrite          = is_MemWrite;
     assign os_MemRead           = is_MemRead; 
     assign os_load_store_type   = is_load_store_type;
+    assign os_stop_pipe         = is_stop_pipe;
 endmodule

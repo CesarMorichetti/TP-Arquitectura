@@ -18,6 +18,7 @@ module Latch_EX_MEM(
                 input wire          is_MemtoReg,
                 input wire          is_MemWrite,
                 input wire          is_MemRead,    
+                input wire          is_stop_pipe,
                 input wire [2  : 0] is_load_store_type,
                 output reg [31 : 0] o_jump,//direccion a saltar
                 output reg [31 : 0] o_pc_to_reg,
@@ -32,6 +33,7 @@ module Latch_EX_MEM(
                 output reg          os_MemtoReg,
                 output reg          os_MemWrite,
                 output reg          os_MemRead,    
+                output reg          os_stop_pipe,
                 output reg [2  : 0] os_load_store_type
                     );
 
@@ -52,6 +54,7 @@ module Latch_EX_MEM(
             os_MemWrite         <= 0;              
             os_MemRead          <= 0; 
             os_load_store_type  <= 0;
+            os_stop_pipe        <= 0;
         end
         else begin
             if(i_step) begin
@@ -68,6 +71,7 @@ module Latch_EX_MEM(
                 os_MemWrite         <= is_MemWrite;              
                 os_MemRead          <= is_MemRead; 
                 os_load_store_type  <= is_load_store_type;
+                os_stop_pipe        <= is_stop_pipe;
             end
         end
     end

@@ -12,6 +12,7 @@ module Stage_Memory(
                 input  wire          is_MemWrite,
                 input  wire          is_MemRead,
                 input  wire [2  : 0] is_load_store_type,
+                input  wire          is_stop_pipe,
                 output wire [31 : 0] o_output_mem,
                 output wire [31 : 0] o_ALU_res,
                 output wire [4  : 0] o_addr_reg_dst,
@@ -19,12 +20,15 @@ module Stage_Memory(
                 //output wire          os_select_addr_reg,
                 output wire          os_write_pc,
                 output wire          os_RegWrite,
-                output wire          os_MemtoReg
+                output wire          os_MemtoReg,
+                output wire          os_stop_pipe, 
+                output wire [1023 : 0] o_data_to_debug
                 );
     
     wire [31 : 0] bus_store_memory;
     wire [31 : 0] bus_memory_load;
 //Ver  que onda con el flag zero y el MemRead
+    /*
     BRAM u_memory(
                  .clk(clk),
                  .i_w_enable(is_MemWrite),
@@ -32,7 +36,16 @@ module Stage_Memory(
                  .i_data(bus_store_memory),
                  .o_data(bus_memory_load)
                  );
-
+*/
+    data_memory u_data_memory(
+                             .clk(clk),
+                             .i_Read(is_MemRead),
+                             .i_wenable(is_MemWrite),
+                             .i_address(i_ALU_res[4:0]),
+                             .i_data(bus_store_memory),
+                             .o_data(bus_memory_load),
+                             .o_data_to_debug(o_data_to_debug)
+                             );
     store_instruction_type
             u_store_instruction_type(
                                     .is_load_store_type(is_load_store_type),
@@ -53,4 +66,5 @@ module Stage_Memory(
     assign os_MemtoReg        = is_MemtoReg;
     //assign os_select_addr_reg = is_select_addr_reg;
     assign os_write_pc        = is_write_pc;
+    assign os_stop_pipe       = is_stop_pipe;
 endmodule

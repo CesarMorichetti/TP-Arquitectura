@@ -3,6 +3,11 @@ module Stage_Fetch(
     input   wire            clk,
 	input   wire            rst,
     input   wire            i_step,
+    //para escribir program memory
+    input   wire            i_program_memory_write,
+    input   wire [31 : 0]   i_instruction_write,
+    input   wire [7  : 0]   i_address_write,
+
 	//Entradas a la etapa desde etapa MEM
 	//input   wire            i_MUX_branch_selector,
     //input   wire            i_MUX_jump_selector,
@@ -14,7 +19,8 @@ module Stage_Fetch(
 	input   wire            i_PC_write,
 	//salida de la etapa IF
 	output  wire [31 : 0]   o_pc,
-    output  wire [31 : 0]   o_instruction
+    output  wire [31 : 0]   o_instruction,
+    output  wire            os_stop_pipe
     );
     
     
@@ -22,7 +28,7 @@ module Stage_Fetch(
     wire [31:0] bus2; //salida MUX y entrada a PC
     wire [31:0] bus3; //salida PC y entrada a ADD y InstMemory
     wire [31:0] bus4; //salida InstMemory
-    //wire [31:0] bus5; //bus entre mux
+    wire [7 :0] bus_mux_memory; //bus entre mux
 /*
     MUX2to1 u_MUX_branch(
             .i_selector(i_MUX_branch_selector),
@@ -56,15 +62,28 @@ module Stage_Fetch(
             .o_adder(bus1) //32  bits
             );
 
+    //MUX para determinar si el address es del debug o del pc
+    MUX2to1 #(.LEN(8))
+            u_MUX_memory_address(
+            .i_selector(i_program_memory_write),
+            .i_entradaMUX_0(bus3[7:0]),
+            .i_entradaMUX_1(i_address_write),
+            .o_salidaMUX(bus_mux_memory)
+            );
+
     //instruction_memory
     BRAM u_instruction_memory(
                         .clk(clk),
-                        .i_w_enable(0),
-                        .i_address(bus3[7:0]),
-                        .i_data('h00000000),
+                        .i_w_enable(i_program_memory_write),
+                        .i_address(bus_mux_memory),
+                        .i_data(i_instruction_write),
                         .o_data(bus4)
                         );
 
+    stop_pipe u_stop_pipe(
+             .i_instruction(bus4),
+             .os_stop_pipe(os_stop_pipe)
+             );
     assign o_pc             = bus1;
     assign o_instruction    = bus4;
 endmodule
