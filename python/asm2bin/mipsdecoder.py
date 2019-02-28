@@ -64,6 +64,10 @@ def convert(code):
         print("00000000000000000000000000000000")
         return "00000000000000000000000000000000"
 
+    elif func_type == "halt":
+        print("11111111111111111111111111111111")
+        return "11111111111111111111111111111111"
+
     else:
         print("Instruccion no valida")
         return

@@ -16,3 +16,5 @@ sw r6 0(r5)
 jalr r10 r4
 lbu r1 0x5(r2)
 lb r1 0x5(r2)
+jr r10
+halt
