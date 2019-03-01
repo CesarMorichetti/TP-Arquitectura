@@ -2,11 +2,12 @@
 module Top_level(
                 input wire             clk,
                 input wire             rst,
-                input wire             i_rx_done,
-                input wire             i_tx_done,
-                input wire  [7 : 0]    i_data,
-                output wire [7 : 0]    o_data_send,
-                output wire            o_tx_start
+                input wire  [7 : 0]    i_rx_data,
+                input wire             is_rx_done,
+                input wire             is_tx_done,
+                output wire [7 : 0]    o_tx_data,
+                output wire            os_tx_start
+                //output wire [2559:0] o_test
                 );
 
     
@@ -26,19 +27,21 @@ module Top_level(
                .o_to_debug(bus_data_mips),
                .o_stop_signal(stop_signal)
                );
-    debugger u_debugger(
-               .rst(rst),        
-               .clk(clk),
-               .i_rx_done(i_rx_done),
-               .i_tx_done(i_tx_done),
-               .i_data(i_data),
-               .is_stop_pipe(stop_signal),
-               .i_data_from_mips({{2{1'b0}},bus_data_mips}),
-               .o_step(step),
-               .o_MemWrite(MemWrite),
-               .o_instruction(instruction),
-               .o_address(address),
-               .o_data_send(o_data_send),
-               .o_tx_start(o_tx_start)
-               );
+    
+    FSM_Top u_FSM_Top(
+                     .rst(rst),
+                     .clk(clk),
+                     .i_rx_data(i_rx_data),      
+                     .i_data_from_mips({{2{1'b0}},bus_data_mips}),
+                     .is_rx_done(is_rx_done),     
+                     .is_tx_done(is_tx_done),     
+                     .is_stop_pipe(stop_signal),   
+                     .o_step(step),         
+                     .o_address(address),      
+                     .o_instruction(instruction),  
+                     .o_tx_data(o_tx_data),       
+                     .os_tx_start(os_tx_start),     
+                     .os_MemWrite(MemWrite)      
+                     );
+    //assign o_test = {{2{1'b0}},bus_data_mips};
 endmodule
