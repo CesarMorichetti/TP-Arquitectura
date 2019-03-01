@@ -55,11 +55,19 @@ def reg_decode(func_type, instr, regs):
             except:
                 return None
 
-        #special case for MIPS jalr
-        if (instr == "jalr"):
+        #special case for MIPS jr
+        if (instr == "jr"):
             try:
                 #return[        rs,        rt, rd,shamt]
                 return [registers[regs[0]], 0, 0, 0]
+            except:
+                return None
+
+        #special case for MIPS jalr
+        if (instr == "jalr"):
+            try:
+                #return[         rs       ,rt,         rd        ,shamt]
+                return [registers[regs[0]], 0, registers[regs[1]], 0]
             except:
                 return None
 
@@ -107,10 +115,10 @@ def reg_decode(func_type, instr, regs):
             try:
                 if len(regs[1]) > 1 and regs[1][1] == "x" :
                     imm = int(regs[1], base=16)
-                    
+
                 else:
                     imm = int(regs[1])
-                    
+
                 #return[        rs                 rt             immediate ]
                 return [registers[regs[2]], registers[regs[0]], imm]
             except:
@@ -120,10 +128,10 @@ def reg_decode(func_type, instr, regs):
         try:
             if len(regs[2]) > 1 and regs[2][1] == "x" :
                 imm = int(regs[2], base=16)
-                
+
             else:
                 imm = int(regs[2])
-                
+
             #return[        rs                 rt             immediate ]
             return [registers[regs[1]], registers[regs[0]], imm]
         except:
@@ -145,5 +153,9 @@ def reg_decode(func_type, instr, regs):
 
     elif func_type == "nop":
         return "nop"
+
+    elif func_type == "halt":
+        return "halt"
+
     else:
         return None
