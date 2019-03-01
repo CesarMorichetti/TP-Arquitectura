@@ -19,7 +19,7 @@ module tb_Toplevel();
 
         #100
         rst = 1;
-        
+        /*
         //Elijo estado load 
         is_rx_done = 1;
         i_rx_data  = 8'b00000001;
@@ -88,17 +88,14 @@ module tb_Toplevel();
         i_rx_data = 8'b11111111;
         #20
         is_rx_done = 0;
-    
+    */
     //Elijo estado fast 
-            /*
-            i_rx_done = 1;
-            i_data = 8'b00000011;
-            #20
-            i_rx_done = 0;
             
-            #700
-            i_tx_done = 1;
-            */
+            is_rx_done = 1;
+            i_rx_data = 8'b00000010;
+            #20
+            is_rx_done = 0;
+            
             
 
             //$fdisplay(ch, " %h ", o_data_send);

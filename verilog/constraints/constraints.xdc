@@ -46,8 +46,8 @@ set_property PACKAGE_PIN W5 [get_ports clk]
  
 
 ## LEDs
-set_property PACKAGE_PIN U16 [get_ports {o_tx_start}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {o_tx_start}]
+set_property PACKAGE_PIN U16 [get_ports {os_tx_start}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {os_tx_start}]
 #set_property PACKAGE_PIN E19 [get_ports {led[1]}]					
 #	set_property IOSTANDARD LVCMOS33 [get_ports {led[1]}]
 #set_property PACKAGE_PIN U19 [get_ports {led[2]}]					
@@ -110,10 +110,10 @@ set_property PACKAGE_PIN U16 [get_ports {o_tx_start}]
 
 
 ##Buttons
-set_property PACKAGE_PIN U18 [get_ports i_tx_done]						
-	set_property IOSTANDARD LVCMOS33 [get_ports i_tx_done]
-set_property PACKAGE_PIN T18 [get_ports i_rx_done]						
-	set_property IOSTANDARD LVCMOS33 [get_ports i_rx_done]
+set_property PACKAGE_PIN U18 [get_ports is_tx_done]						
+	set_property IOSTANDARD LVCMOS33 [get_ports is_tx_done]
+set_property PACKAGE_PIN T18 [get_ports is_rx_done]						
+	set_property IOSTANDARD LVCMOS33 [get_ports is_rx_done]
 set_property PACKAGE_PIN W19 [get_ports rst]						
 	set_property IOSTANDARD LVCMOS33 [get_ports rst]
 #set_property PACKAGE_PIN T17 [get_ports rst]						
@@ -266,10 +266,10 @@ set_property PACKAGE_PIN W19 [get_ports rst]
 
 
 ##USB-RS232 Interface
-set_property PACKAGE_PIN B18 [get_ports i_data]						
-	set_property IOSTANDARD LVCMOS33 [get_ports i_data]
-set_property PACKAGE_PIN A18 [get_ports o_data_send]						
-	set_property IOSTANDARD LVCMOS33 [get_ports o_data_send]
+set_property PACKAGE_PIN B18 [get_ports i_rx_data]						
+	set_property IOSTANDARD LVCMOS33 [get_ports i_rx_data]
+set_property PACKAGE_PIN A18 [get_ports o_tx_send]						
+	set_property IOSTANDARD LVCMOS33 [get_ports o_tx_send]
 
 
 ##USB HID (PS/2)

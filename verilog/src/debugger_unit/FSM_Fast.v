@@ -75,7 +75,7 @@ module FSM_Fast(
                 flag_clear_count = 1'b0;
             end
             wait_pipe_done: begin
-                if(is_stop_pipe)begin
+                if(is_stop_pipe == 1'b0)begin
                     state_next       = start_send;
                     os_start_send    = 1'b0;  
                     os_step          = 1'b0;

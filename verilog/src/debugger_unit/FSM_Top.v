@@ -3,7 +3,7 @@ module FSM_Top(
                 input wire             rst,
                 input wire             clk,
                 input wire  [7    : 0] i_rx_data,       //data del receptor
-                input wire  [2559 : 0] i_data_from_mips,//data del pipe
+                input wire  [2557 : 0] i_data_from_pipe,//data del pipe
                 input wire             is_rx_done,      //recibio un dato
                 input wire             is_tx_done,      //termino de transmitir un dato
                 input wire             is_stop_pipe,    //señal de finalizacion del pipe
@@ -12,8 +12,7 @@ module FSM_Top(
                 output wire [31   : 0] o_instruction,   //instruccion para program memory
                 output wire [7    : 0] o_tx_data,       //data a transmitir
                 output wire            os_tx_start,     //comenzar a transmitir
-                output wire            os_MemWrite,      //escribir la program memory
-                input wire            i_aux_done_send 
+                output wire            os_MemWrite      //escribir la program memory
               );
      
     //Estados 
@@ -41,6 +40,7 @@ module FSM_Top(
     wire load_done;
     wire fast_done;
     wire step_done;
+    wire send_done;
 
     wire step_signal_from_fast;
     wire start_send_from_fast;
@@ -211,11 +211,25 @@ module FSM_Top(
                        .clk(clk),
                        .rst(rst),
                        .is_start(start_fast),
-                       .is_done_send(i_aux_done_send),
+                       .is_done_send(send_done),
                        .is_stop_pipe(is_stop_pipe),
                        .os_step(step_signal_from_fast),     
                        .os_start_send(start_send_from_fast),
                        .os_done(fast_done),
                        .o_clk_count(bus_clk_count_from_fast)
                      );
+
+    FSM_Send u_FSM_Send(
+                       .clk(clk),
+                       .rst(rst),
+                       .i_data_from_pipe({{2{1'b0}},
+                                         clk_count,
+                                         i_data_from_pipe}),
+                       .is_start(start_send),
+                       .is_tx_done(is_tx_done),
+                       .o_tx_data(o_tx_data),
+                       .os_tx_start(os_tx_start),
+                       .os_done(send_done)
+                       );
+
     endmodule

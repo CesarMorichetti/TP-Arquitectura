@@ -32,7 +32,7 @@ module Top_level(
                      .rst(rst),
                      .clk(clk),
                      .i_rx_data(i_rx_data),      
-                     .i_data_from_mips({{2{1'b0}},bus_data_mips}),
+                     .i_data_from_pipe(bus_data_mips),
                      .is_rx_done(is_rx_done),     
                      .is_tx_done(is_tx_done),     
                      .is_stop_pipe(stop_signal),   

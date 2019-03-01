@@ -77,7 +77,7 @@ module FSM_Send(
                 else begin
                     if(is_tx_done)begin
                         state_next      = data;      
-                        count_send_next = count_send_reg + 1;
+                        count_send_next = count_send_reg + 8;
                         data_send_next  = data_send_reg;
                         os_tx_start     = 1;
                         os_done         = 0;

@@ -6,7 +6,7 @@ module tb_FSM_Send();
     reg [2591 : 0]  i_data_from_pipe;
     reg             is_start;
     reg             is_tx_done;
-    reg             clk_counter;
+    reg  [31 :  0]  clk_counter;
     wire [7   : 0]  o_tx_data;
     wire            os_tx_start;
     wire            os_done;
@@ -23,6 +23,9 @@ module tb_FSM_Send();
         rst = 1;
         #20
         i_data_from_pipe[0]     = 1;
+        i_data_from_pipe[1]     = 1;
+        i_data_from_pipe[2]     = 1;
+        i_data_from_pipe[3]     = 1;
         i_data_from_pipe[2591]  = 1;
         clk_counter             = 'hffffffff; 
         #200
