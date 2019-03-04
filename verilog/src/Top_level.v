@@ -2,11 +2,11 @@
 module Top_level(
                 input wire             clk,
                 input wire             rst,
-                input wire  [7 : 0]    i_rx_data,
-                input wire             is_rx_done,
-                input wire             is_tx_done,
-                output wire [7 : 0]    o_tx_data,
-                output wire            os_tx_start
+                input wire             i_rx_data,
+                //input wire             is_rx_done,
+                //input wire             is_tx_done,
+                output wire            o_tx_data
+                //output wire            os_tx_start
                 //output wire [2559:0] o_test
                 );
 
@@ -28,20 +28,17 @@ module Top_level(
                .o_stop_signal(stop_signal)
                );
     
-    FSM_Top u_FSM_Top(
-                     .rst(rst),
-                     .clk(clk),
-                     .i_rx_data(i_rx_data),      
-                     .i_data_from_pipe(bus_data_mips),
-                     .is_rx_done(is_rx_done),     
-                     .is_tx_done(is_tx_done),     
-                     .is_stop_pipe(stop_signal),   
-                     .o_step(step),         
-                     .o_address(address),      
-                     .o_instruction(instruction),  
-                     .o_tx_data(o_tx_data),       
-                     .os_tx_start(os_tx_start),     
-                     .os_MemWrite(MemWrite)      
+    debug_unit u_debug_unit(
+                 .rst(rst),
+                 .clk(clk),
+                 .i_data_from_pipe(bus_data_mips),
+                 .is_stop_pipe(stop_signal),
+                 .i_rx_bit(i_rx_data),
+                 .os_step(step),
+                 .o_address(address),
+                 .o_instruction(instruction),
+                 .os_MemWrite(MemWrite),
+                 .o_tx_bit(o_tx_data)
                      );
     //assign o_test = {{2{1'b0}},bus_data_mips};
 endmodule

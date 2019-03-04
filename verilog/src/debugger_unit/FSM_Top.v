@@ -39,7 +39,7 @@ module FSM_Top(
 
     wire load_done;
     wire fast_done;
-    wire step_done;
+    //wire step_done;
     wire send_done;
 
     wire step_signal_from_fast;

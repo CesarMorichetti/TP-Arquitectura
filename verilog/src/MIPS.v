@@ -404,7 +404,7 @@ module MIPS(
                            .os_stop_pipe(bus_stop_pipe)
                            );
 
-    assign o_to_debug = {pc_latch_id, instruction_if_latch, stop_pipe_latch_id,
+    assign o_to_debug = {pc_latch_id, instruction_latch_id, stop_pipe_latch_id,
 
                          bus_register_to_debug,
 

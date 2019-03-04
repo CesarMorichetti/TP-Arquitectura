@@ -67,7 +67,7 @@ module FSM_Send(
 
             end
             send: begin
-                if(count_send_reg == 324)begin
+                if(count_send_reg > 2591)begin
                     state_next      = ready;      
                     count_send_next = 7;
                     data_send_next  = 0;
@@ -75,7 +75,7 @@ module FSM_Send(
                     os_done         = 0;
                 end
                 else begin
-                    if(is_tx_done)begin
+                    if(is_tx_done==1'b0)begin
                         state_next      = data;      
                         count_send_next = count_send_reg + 8;
                         data_send_next  = data_send_reg;

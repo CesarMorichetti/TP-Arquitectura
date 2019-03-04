@@ -1,4 +1,4 @@
-`timescale 1ns / 100ps
+`timescale 1ns / 1ps
 module Tx #(
 	parameter LEN_DATA 			= 8,
 	parameter STOP_BIT_COUNT 	= 16
