@@ -11,15 +11,14 @@ module FSM_Send(
                 );
 
 
-    localparam [2 : 0] idle         = 3'b000;
-    localparam [2 : 0] data         = 3'b001;
-    localparam [2 : 0] send         = 3'b010;
-    localparam [2 : 0] wait_send    = 3'b011;
-    localparam [2 : 0] ready        = 3'b100;
+    localparam [1 : 0] idle  = 2'b00;
+    localparam [1 : 0] data  = 2'b01;
+    localparam [1 : 0] send  = 2'b10;
+    localparam [1 : 0] ready = 2'b11;
 
     //Variables
-    reg [2  : 0] state_reg;
-    reg [2  : 0] state_next;
+    reg [1  : 0] state_reg;
+    reg [1  : 0] state_next;
 
     reg [11 : 0] count_send_reg; 
     reg [11 : 0] count_send_next; 
@@ -65,6 +64,7 @@ module FSM_Send(
                 data_send_next  = i_data_from_pipe[count_send_reg -: 8];
                 os_tx_start     = 0;
                 os_done         = 0;
+
             end
             send: begin
                 if(count_send_reg > 2591)begin
@@ -75,27 +75,20 @@ module FSM_Send(
                     os_done         = 0;
                 end
                 else begin
-                    state_next      = wait_send;      
-                    count_send_next = count_send_reg + 8;
-                    data_send_next  = data_send_reg;
-                    os_tx_start     = 1;
-                    os_done         = 0;
-                end
-            end
-            wait_send: begin
-                if(is_tx_done==1'b1)begin
-                    state_next      = data;      
-                    count_send_next = count_send_reg;
-                    data_send_next  = data_send_reg;
-                    os_tx_start     = 0;
-                    os_done         = 0;
-                end
-                else begin
-                    state_next      = wait_send;      
-                    count_send_next = count_send_reg;
-                    data_send_next  = data_send_reg;
-                    os_tx_start     = 0;
-                    os_done         = 0;
+                    if(is_tx_done==1'b0)begin
+                        state_next      = data;      
+                        count_send_next = count_send_reg + 8;
+                        data_send_next  = data_send_reg;
+                        os_tx_start     = 1;
+                        os_done         = 0;
+                    end
+                    else begin
+                        state_next      = send;      
+                        count_send_next = count_send_reg;
+                        data_send_next  = data_send_reg;
+                        os_tx_start     = 0;
+                        os_done         = 0;
+                    end
                 end
             end
             ready: begin

@@ -5,9 +5,10 @@ module Top_level(
                 input wire             i_rx_data,
                 //input wire             is_rx_done,
                 //input wire             is_tx_done,
-                output wire            o_tx_data
+                output wire            o_tx_data,
                 //output wire            os_tx_start
                 //output wire [2559:0] o_test
+                output wire            o_led
                 );
 
     
@@ -38,7 +39,8 @@ module Top_level(
                  .o_address(address),
                  .o_instruction(instruction),
                  .os_MemWrite(MemWrite),
-                 .o_tx_bit(o_tx_data)
+                 .o_tx_bit(o_tx_data),
+                 .o_led(o_led)
                      );
     //assign o_test = {{2{1'b0}},bus_data_mips};
 endmodule
