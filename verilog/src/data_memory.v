@@ -11,9 +11,9 @@ module data_memory(
         output wire [1023 : 0] o_data_to_debug
     );
     reg [31:0]memory[0:31];
-    initial begin
-        $readmemb("clear_register.mem", memory);
-    end
+    //initial begin
+    //    $readmemb("clear_register.mem", memory);
+    //end
 
     always@(posedge clk) begin
         if(i_wenable) begin

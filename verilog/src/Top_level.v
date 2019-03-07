@@ -8,7 +8,9 @@ module Top_level(
                 output wire            o_tx_data,
                 //output wire            os_tx_start
                 //output wire [2559:0] o_test
-                output wire            o_led
+                output wire            o_led,
+                output wire [7:0]           o_rx,
+                output wire                 o_stop_signal
                 );
 
     
@@ -20,7 +22,7 @@ module Top_level(
     wire          stop_signal;
     MIPS u_MIPS(
                .clk(clk), 
-               .rst(rst),
+               .rst(~rst),
                .i_step(step),
                .i_program_memory_write(MemWrite),
                .i_instruction_write(instruction),
@@ -30,7 +32,7 @@ module Top_level(
                );
     
     debug_unit u_debug_unit(
-                 .rst(rst),
+                 .rst(~rst),
                  .clk(clk),
                  .i_data_from_pipe(bus_data_mips),
                  .is_stop_pipe(stop_signal),
@@ -40,7 +42,9 @@ module Top_level(
                  .o_instruction(instruction),
                  .os_MemWrite(MemWrite),
                  .o_tx_bit(o_tx_data),
-                 .o_led(o_led)
+                 .o_led(o_led),
+                 .o_rx(o_rx)
                      );
+      assign o_stop_signal = stop_signal;
     //assign o_test = {{2{1'b0}},bus_data_mips};
 endmodule

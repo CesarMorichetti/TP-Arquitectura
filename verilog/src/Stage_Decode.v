@@ -87,9 +87,9 @@ module Stage_Decode(
     registers u_register (
                     .clk(clk),
                     .i_wenable(i_RegWrite),
-                    .i_addres_rs(rs),
-                    .i_addres_rt(rt),
-                    .i_addres_data(i_addr_data),
+                    .i_address_rs(rs),
+                    .i_address_rt(rt),
+                    .i_address_data(i_addr_data),
                     .i_data(i_data),
                     .o_data_rs(rs_reg),
                     .o_data_rt(rt_reg),

@@ -4,37 +4,39 @@
 module registers(
         input wire clk,
         input wire i_wenable,
-        input wire [4:0] i_addres_rs,
-        input wire [4:0] i_addres_rt,
-        input wire [4:0] i_addres_data,
+        input wire [4:0] i_address_rs,
+        input wire [4:0] i_address_rt,
+        input wire [4:0] i_address_data,
         input wire [31:0] i_data,
         output reg [31:0] o_data_rs,
         output reg [31:0] o_data_rt,
         output wire [1023 : 0] o_registers
     );
     reg [31:0]register_file[0:31];
-    initial begin
-        $readmemb("clear_register.mem", register_file);
-    end
+    //initial begin
+    //    $readmemb("clear_register.mem", register_file);
+    //end
 
     always@(posedge clk) begin
-        if(i_wenable) begin
-            register_file[i_addres_data] <= i_data;
+        register_file[0] <= 0;
+        if(i_wenable && (i_address_data != 0)) begin
+            register_file[i_address_data] <= i_data;
         end
     end
+
     always@(negedge clk) begin
-        if(i_addres_rs == i_addres_data)begin
+        if(i_address_rs == i_address_data && (i_address_rs != 0))begin
             o_data_rs <= i_data;
-            o_data_rt <= register_file[i_addres_rt];
+            o_data_rt <= register_file[i_address_rt];
         end 
         else begin
-            if(i_addres_rt == i_addres_data)begin
-                o_data_rs <= register_file[i_addres_rs];
+            if(i_address_rt == i_address_data && (i_address_rt != 0))begin
+                o_data_rs <= register_file[i_address_rs];
                 o_data_rt <= i_data; 
             end 
             else begin
-                o_data_rs <= register_file[i_addres_rs];
-                o_data_rt <= register_file[i_addres_rt];
+                o_data_rs <= register_file[i_address_rs];
+                o_data_rt <= register_file[i_address_rt];
             end
         end
     end
