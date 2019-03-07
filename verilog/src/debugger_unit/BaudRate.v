@@ -18,7 +18,7 @@ always @(posedge clk or negedge rst) begin
 	end 
 	else begin
 	//326
-		if(count == 163)begin
+		if(count == 326)begin
 			flag 	<= 1'b1;
 			count	<= 0;
 		end

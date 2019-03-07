@@ -10,7 +10,8 @@ module debug_unit(
                  output wire [31  : 0] o_instruction,
                  output wire           os_MemWrite,
                  output wire           o_tx_bit,
-                 output wire           o_led
+                 output wire           o_led,
+                 output wire [7:0]     o_rx
                  );
 
 
@@ -59,4 +60,5 @@ module debug_unit(
                         .rst(rst),
                         .tick(tick)
                         );
+    assign o_rx = rx;
 endmodule
