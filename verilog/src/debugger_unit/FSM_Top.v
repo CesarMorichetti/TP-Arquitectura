@@ -13,7 +13,8 @@ module FSM_Top(
                 output wire [7    : 0] o_tx_data,       //data a transmitir
                 output wire            os_tx_start,     //comenzar a transmitir
                 output wire            os_MemWrite,      //escribir la program memory
-                output reg             o_led
+                output reg             o_reset_pipe,            
+                output reg             o_led            //Led estado idle
               );
      
     //Estados 
@@ -60,6 +61,7 @@ module FSM_Top(
         case(state_reg)
             idle: begin
                 o_led      = 1;
+                o_reset_pipe = 0;
                 if(is_rx_done)begin
                     case(i_rx_data)
                         8'b00000001: begin
@@ -112,6 +114,7 @@ module FSM_Top(
             end
             load: begin
                 o_led      = 0;
+                o_reset_pipe = 1;
                 state_next = wait_load; 
                 start_load = 1'b1;
                 start_fast = 1'b0;
@@ -122,6 +125,7 @@ module FSM_Top(
             end
             wait_load: begin
                 o_led      = 0;
+                o_reset_pipe = 1;
                 if(load_done)begin
                     state_next = idle; 
                     start_load = 1'b0;
@@ -143,6 +147,7 @@ module FSM_Top(
             end
             fast: begin
                 o_led      = 0;
+                o_reset_pipe = 1;
                 state_next = wait_fast; 
                 start_load = 1'b0;
                 start_fast = 1'b1;
@@ -153,6 +158,7 @@ module FSM_Top(
             end
             wait_fast: begin
                 o_led      = 0;
+                o_reset_pipe = 1;
                 if(fast_done)begin
                     state_next = idle; 
                     start_load = 1'b0;
@@ -174,6 +180,7 @@ module FSM_Top(
             end
             step: begin
                 o_led      = 0;
+                o_reset_pipe = 1;
                 state_next = idle; 
                 start_load = 1'b0;
                 start_fast = 1'b0;
@@ -184,6 +191,7 @@ module FSM_Top(
             end
             wait_step: begin
                 o_led      = 0;
+                o_reset_pipe = 1;
                 state_next = idle; 
                 start_load = 1'b0;
                 start_fast = 1'b0;
@@ -194,6 +202,7 @@ module FSM_Top(
             end
             default: begin
                 o_led      = 0;
+                o_reset_pipe = 1;
                 state_next = idle; 
                 start_load = 1'b0;
                 start_fast = 1'b0;

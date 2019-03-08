@@ -10,6 +10,7 @@ module debug_unit(
                  output wire [31  : 0] o_instruction,
                  output wire           os_MemWrite,
                  output wire           o_tx_bit,
+                 output wire           o_reset_pipe,
                  output wire           o_led,
                  output wire [7:0]     o_rx
                  );
@@ -35,6 +36,7 @@ module debug_unit(
                     .o_tx_data(tx),
                     .os_tx_start(tx_start),
                     .os_MemWrite(os_MemWrite),
+                    .o_reset_pipe(o_reset_pipe),
                     .o_led(o_led)
                     ); 
     Tx u_tx(

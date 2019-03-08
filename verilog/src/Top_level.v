@@ -20,9 +20,10 @@ module Top_level(
     wire [7  : 0] address;
     wire [2557 : 0] bus_data_mips;
     wire          stop_signal;
+    wire          bus_reset_pipe;
     MIPS u_MIPS(
                .clk(clk), 
-               .rst(~rst),
+               .rst(bus_reset_pipe),
                .i_step(step),
                .i_program_memory_write(MemWrite),
                .i_instruction_write(instruction),
@@ -43,6 +44,7 @@ module Top_level(
                  .os_MemWrite(MemWrite),
                  .o_tx_bit(o_tx_data),
                  .o_led(o_led),
+                 .o_reset_pipe(bus_reset_pipe),
                  .o_rx(o_rx)
                      );
       assign o_stop_signal = stop_signal;
