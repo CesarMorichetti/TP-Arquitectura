@@ -8,7 +8,7 @@ def merge_list(data):
     turn_around = []
     for i in data:
         turn_around.insert(0,i)
-    print turn_around
+    #print turn_around
     return "".join(turn_around)
 
 """
@@ -80,8 +80,9 @@ def data_memory(data):
         memory.append(data[i * 32:(i * 32) + 32])
     # print registers
     for idx, val in enumerate(memory):
-        print "Memoria", idx, ":", int(val, 2), "{0:#0{1}x}".format(int(val, 2), (32 / 4) + 2), "{0:#0{1}b}".format(
-            int(val, 2), 34)
+        print "Memoria", idx, ":", int(val, 2),\
+        "{0:#0{1}x}".format(int(val, 2), (32 / 4) + 2), "{0:#0{1}b}".format(\
+        int(val, 2), 34)
 
 """
 Recibe el vector del Latch EX_MEM, lo divide en cada senal
@@ -120,37 +121,17 @@ def id_ex(data):
     o_pc               = data[111:143]
     o_jump_address     = data[143:175]
     o_op               = data[175:181]
-    os_RegDst          = data[182]
-    os_MemRead         = data[183]
-    os_MemWrite        = data[184]
-    os_MemtoReg        = data[185]
+    os_RegDst          = data[181]
+    os_MemRead         = data[182]
+    os_MemWrite        = data[183]
+    os_MemtoReg        = data[184]
     os_ALUop           = data[185:189]
-    os_ALUsrc          = data[190]
-    os_RegWrite        = data[191]
-    os_shmat           = data[192]
+    os_ALUsrc          = data[189]
+    os_RegWrite        = data[190]
+    os_shmat           = data[191]
     os_load_store_type = data[192:195]
-    os_stall           = data[196]
-    os_stop_pipe       = data[197]
-    len(o_rt_addr)          
-    len(o_rd_addr)          
-    len(o_rs_addr)          
-    len(o_sig_extended)     
-    len(o_rs_reg)           
-    len(o_rt_reg)           
-    len(o_pc)               
-    len(o_jump_address)     
-    len(o_op)               
-    len(os_RegDst)          
-    len(os_MemRead)         
-    len(os_MemWrite)        
-    len(os_MemtoReg)        
-    len(os_ALUop)           
-    len(os_ALUsrc)          
-    len(os_RegWrite)        
-    len(os_shmat)           
-    len(os_load_store_type) 
-    len(os_stall)           
-    len(os_stop_pipe)       
+    os_stall           = data[195]
+    os_stop_pipe       = data[196]
     return o_rt_addr, o_rd_addr, o_rs_addr, o_sig_extended, o_rs_reg,\
            o_rt_reg, o_pc, o_jump_address, o_op, os_RegDst, os_MemRead,\
            os_MemWrite, os_MemtoReg, os_ALUop, os_ALUsrc, os_RegWrite,\
@@ -165,7 +146,8 @@ def registers(data):
         registers.append(data[i*32:(i*32)+32])
     #print registers
     for idx,val in enumerate(registers):
-        print "Registro", idx, ":" ,int(val,2),"{0:#0{1}x}".format(int(val,2),(32/4)+2), "{0:#0{1}b}".format(int(val,2),34)
+        print "Registro", idx, ":" ,int(val,2),"{0:#0{1}x}".\
+        format(int(val,2),(32/4)+2), "{0:#0{1}b}".format(int(val,2),34)
 
 """
 Recibe el vector del Latch IF_ID, lo divide en cada senal
@@ -187,18 +169,18 @@ def print_func(data, bits, decimal=True, hexa=True, binary=True):
     if hexa:
         print_line.append("{0:#0{1}x}".format(int(data,2),(bits/4)+2))
     if binary:
-        print_line.append("{0:#0{1}b}".format(int(data,2),bits+2))
+        print_line.append("{0:#0{1}b}".format(  int(data,2),bits+2))
     return print_line
 
 """
 Lee archivo con informacion del debuger.
 """
 def simula_recepcion_datos():
-    f = open("filename.txt","r")
+    f = open("files_from_fpga/file1.txt","r")
     cont = f.read()
     cont = cont.replace("\n","")
     read = [cont[i:i+8] for i in range(0, 2592, 8)]
-    print read
+    #print read
     return read
 
 if __name__ == "__main__":
@@ -218,6 +200,53 @@ if __name__ == "__main__":
     print "****************************************************************"
     registers(reg_reg)
     print "****************************************************************"
+    id_ex_rt_addr, id_ex_rd_addr, id_ex_rs_addr, id_ex_sig_extended, \
+    id_ex_rs_reg, id_ex_rt_reg, id_ex_pc, id_ex_jump_address, id_ex_op, \
+    id_ex_RegDst, id_ex_MemRead, id_ex_MemWrite, id_ex_MemtoReg, id_ex_ALUop, \
+    id_ex_ALUsrc, id_ex_RegWrite, id_ex_shmat, id_ex_load_store_type, \
+    id_ex_stall, id_ex_stop_pipe = id_ex(reg_id_ex)
+
+    print "Latch id_ex rt_addr:        ", print_func(id_ex_rt_addr, 5, True, True, True)
+    print "Latch id_ex rd_addr:        ", print_func(id_ex_rd_addr, 5, True, True, True)
+    print "Latch id_ex rs_addr:        ", print_func(id_ex_rs_addr, 5, True, True, True)
+    print "Latch id_ex sig_extended:   ", print_func(id_ex_sig_extended, 32, True, True, True)
+    print "Latch id_ex rs_reg:         ", print_func(id_ex_rs_reg, 32, True, True, True)
+    print "Latch id_ex rt_reg:         ", print_func(id_ex_rt_reg, 32, True, True, True)
+    print "Latch id_ex pc:             ", print_func(id_ex_pc, 32, True, True, True)
+    print "Latch id_ex jump_address:   ", print_func(id_ex_jump_address, 32, True, True, True)
+    print "Latch id_ex op:             ", print_func(id_ex_op, 6, True, True, True)
+    print "Latch id_ex RegDst:         ", print_func(id_ex_RegDst, 1, True, True, True)
+    print "Latch id_ex MemRead:        ", print_func(id_ex_MemRead, 1, True, True, True)
+    print "Latch id_ex MemWrite:       ", print_func(id_ex_MemWrite, 1, True, True, True)
+    print "Latch id_ex MemtoReg:       ", print_func(id_ex_MemtoReg, 1, True, True, True)
+    print "Latch id_ex ALUop:          ", print_func(id_ex_ALUop, 4, True, True, True)
+    print "Latch id_ex ALUsrc:         ", print_func(id_ex_ALUsrc, 1, True, True, True)
+    print "Latch id_ex RegWrite:       ", print_func(id_ex_RegWrite, 1, True, True, True)
+    print "Latch id_ex shmat:          ", print_func(id_ex_shmat, 1, True, True, True)
+    print "Latch id_ex load_store_type:", print_func(id_ex_load_store_type, 3, True, True, True)
+    print "Latch id_ex stall:          ", print_func(id_ex_stall, 1, True, True, True)
+    print "Latch id_ex stop_pipe:      ", print_func(id_ex_stop_pipe, 1, True, True, True)
+    print "****************************************************************"
+    ex_mem_jump, ex_mem_pc_to_reg, ex_mem_alu_res, ex_mem_rt_reg, \
+    ex_mem_addr_reg_dst, ex_mem_write_pc, ex_mem_take, ex_mem_regWrite, \
+    ex_mem_memtoreg, ex_mem_memwrite, ex_mem_memread, ex_mem_load_store_type, \
+    ex_mem_stop_pipe = ex_mem(reg_ex_mem)
+    print "Latch ex_mem jump_address:    ", print_func(ex_mem_jump, 32, True, True, True)
+    print "Latch ex_mem pc_to_reg:       ", print_func(ex_mem_pc_to_reg, 32, True, True, True)
+    print "Latch ex_mem alu_res:         ", print_func(ex_mem_alu_res, 32, True, True, True)
+    print "Latch ex_mem rt_reg:          ", print_func(ex_mem_rt_reg, 32, True, True, True)
+    print "Latch ex_mem addr_reg_dst:    ", print_func(ex_mem_addr_reg_dst, 5, True, True, True)
+    print "Latch ex_mem write_pc:        ", print_func(ex_mem_write_pc, 1, True, True, True)
+    print "Latch ex_mem jump_take:       ", print_func(ex_mem_take, 1, True, True, True)
+    print "Latch ex_mem regWrite:        ", print_func(ex_mem_regWrite, 1, True, True, True)
+    print "Latch ex_mem memtoreg:        ", print_func(ex_mem_memtoreg, 1, True, True, True)
+    print "Latch ex_mem memwrite:        ", print_func(ex_mem_memwrite, 1, True, True, True)
+    print "Latch ex_mem memread:         ", print_func(ex_mem_memread, 1, True, True, True)
+    print "Latch ex_mem load_store_type: ", print_func(ex_mem_load_store_type, 2, True, True, True)
+    print "Latch ex_mem stop_pipe:       ", print_func(ex_mem_stop_pipe, 1, True, True, True)
+    print "****************************************************************"
+    data_memory(reg_data_mem)
+    print "****************************************************************"
     mem_wb_output_mem, mem_wb_alu_res, mem_wb_addr_reg, mem_wb_pc, \
     mem_wb_write_pc, mem_wb_regwrite, mem_wb_memtoreg, mem_wb_stop_pipe\
         = mem_wb(reg_mem_wb)
@@ -230,28 +259,3 @@ if __name__ == "__main__":
     print "Latch mem_wb memtoreg:  ", print_func(mem_wb_memtoreg, 1, True ,True ,True)
     print "Latch mem_wb stop_pipe: ", print_func(mem_wb_stop_pipe, 1, True ,True ,True)
     print "****************************************************************"
-    data_memory(reg_data_mem)
-    print "****************************************************************"
-    ex_mem_jump, ex_mem_pc_to_reg, ex_mem_alu_res, ex_mem_rt_reg, \
-    ex_mem_addr_reg_dst, ex_mem_write_pc, ex_mem_take, ex_mem_regWrite, \
-    ex_mem_memtoreg, ex_mem_memwrite, ex_mem_memread, ex_mem_load_store_type, \
-    ex_mem_stop_pipe = ex_mem(reg_ex_mem) 
-    print "Latch ex_mem jump_address:    ", print_func(ex_mem_jump, 32, True, True, True)
-    print "Latch ex_mem pc_to_reg:       ", print_func(ex_mem_pc_to_reg, 32, True, True, True)
-    print "Latch ex_mem alu_res:         ", print_func(ex_mem_alu_res, 32, True, True, True)
-    print "Latch ex_mem rt_reg:          ", print_func(ex_mem_rt_reg, 32, True, True, True)
-    print "Latch ex_mem addr_reg_dst:    ", print_func(ex_mem_addr_reg_dst, 5, True, True, True)
-    print "Latch ex_mem write_pc:        ", print_func(ex_mem_write_pc, 1, True, True, True)
-    print "Latch ex_mem jump_take:       ", print_func(ex_mem_take, 1, True, True, True)
-    print "Latch ex_mem regWrite:        ", print_func(ex_mem_regWrite, 1, True, True, True)
-    print "Latch ex_mem memtoreg:        ", print_func(ex_mem_memtoreg, 1, True, True, True)       
-    print "Latch ex_mem memwrite:        ", print_func(ex_mem_memwrite, 1, True, True, True)       
-    print "Latch ex_mem memread:         ", print_func(ex_mem_memread, 1, True, True, True)        
-    print "Latch ex_mem load_store_type: ", print_func(ex_mem_load_store_type, 2, True, True, True)
-    print "Latch ex_mem stop_pipe:       ", print_func(ex_mem_stop_pipe, 1, True, True, True)
-
-    id_ex_rt_addr, id_ex_rd_addr, id_ex_rs_addr, id_ex_sig_extended, \
-    id_ex_rs_reg, id_ex_rt_reg, id_ex_pc, id_ex_jump_address, id_ex_op, \
-    id_ex_RegDst, id_ex_MemRead, id_ex_MemWrite, id_ex_MemtoReg, id_ex_ALUop, \
-    id_ex_ALUsrc, id_ex_RegWrite, id_ex_shmat, id_ex_load_store_type, \
-    id_ex_stall, id_ex_stop_pipe = id_ex(reg_id_ex)
