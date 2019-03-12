@@ -254,6 +254,8 @@ def main(data_from_fpga):
     print "Latch mem_wb memtoreg:  ", print_func(mem_wb_memtoreg, 1, True ,True ,True)
     print "Latch mem_wb stop_pipe: ", print_func(mem_wb_stop_pipe, 1, True ,True ,True)
     print "****************************************************************"
+    print "clk_count: ", print_func(reg_clk_count, 32, True, True, True)
+    return mem_wb_stop_pipe
     
 if __name__ == "__main__":
 

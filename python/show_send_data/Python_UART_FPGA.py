@@ -28,7 +28,7 @@ def main():
     ports = list(port_list.comports())
     for p in ports:
         print (p)
-    #puerto = str(raw_input("Ingrese puerto: "))
+    puerto = str(raw_input("Ingrese puerto: "))
     ser = serial.Serial(
         #port=puerto,	#Configurar con el puerto
         port = "/dev/ttyUSB1",
@@ -76,16 +76,18 @@ def main():
             op = 0x03
             print op
             ser.write(chr(op))
+            stop = "0"
             while(1):
                 otro_step = raw_input("Otro step? 1:yes o 0:no")
-                if int(otro_step):
+                if int(otro_step) and stop == "0":
                     ser.write(chr(0x0f))
                     data = []
                     for i in range(324):
                         data.append("{0:08b}".format(ord(ser.read(1))))
                     
                     data = show_data.merge_list(data)
-                    show_data.main(data)
+                    stop = show_data.main(data)
+                    print "--------------", stop, type(stop)
                 else: 
                     break
 
