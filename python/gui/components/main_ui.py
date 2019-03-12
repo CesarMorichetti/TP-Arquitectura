@@ -59,7 +59,18 @@ class MicompsFrame(wx.Frame):
         self.pipeline_tuples = []
 
         self.lists = []
-        self.serial = serial.Serial()
+        #self.serial = serial.Serial()
+
+        ser = serial.Serial(
+        #port=puerto,	#Configurar con el puerto
+            port = "/dev/ttyUSB1",
+            baudrate=19200,
+            parity=serial.PARITY_NONE,      #Sin bit de paridad
+            stopbits=serial.STOPBITS_ONE,   #1 bit de stop
+            bytesize=serial.EIGHTBITS       #1 byte de dato
+        )
+        ser.isOpen()
+
         self.serial.timeout = 0
         self.thread = None
         self.alive = threading.Event()
@@ -675,11 +686,11 @@ class MicompsFrame(wx.Frame):
         char = 2
         char = unichr(char)
         print "Modo fast"
-        self.serial.write(char.encode('UTF-8', 'replace'))
+        self.ser.write(char.encode('UTF-8', 'replace'))
         time.sleep(0.5)
         newFile = open("file1.txt","wb")
         for i in range(324):
-            newFile.write("{0:08b}".format(ord(serial.read(1))) + "\n")
+            newFile.write("{0:08b}".format(ord(self.ser.read(1))) + "\n")
 
         data_from_fpga = self.simula_recepcion_datos()
         data_from_fpga = self.merge_list(data_from_fpga)
@@ -690,12 +701,12 @@ class MicompsFrame(wx.Frame):
         char = 15
         char = unichr(char)
         print "Siguiente clock"
-        self.serial.write(char.encode('UTF-8', 'replace'))
+        self.ser.write(char.encode('UTF-8', 'replace'))
         time.sleep(0.5)
 
         newFile = open("file1.txt","wb")
         for i in range(324):
-            newFile.write("{0:08b}".format(ord(serial.read(1))) + "\n")
+            newFile.write("{0:08b}".format(ord(ser.read(1))) + "\n")
 
         data_from_fpga = self.simula_recepcion_datos()
         data_from_fpga = self.merge_list(data_from_fpga)
@@ -705,12 +716,12 @@ class MicompsFrame(wx.Frame):
         char = 3
         char = unichr(char)
         print "Modo step by step"
-        self.serial.write(char.encode('UTF-8', 'replace'))
+        self.ser.write(char.encode('UTF-8', 'replace'))
         time.sleep(0.5)
 
         newFile = open("file1.txt","wb")
         for i in range(324):
-            newFile.write("{0:08b}".format(ord(serial.read(1))) + "\n")
+            newFile.write("{0:08b}".format(ord(ser.read(1))) + "\n")
 
         data_from_fpga = self.simula_recepcion_datos()
         data_from_fpga = self.merge_list(data_from_fpga)
@@ -721,30 +732,30 @@ class MicompsFrame(wx.Frame):
         char = 3
         char = unichr(char)
         print "Modo load"
-        self.serial.write(char.encode('UTF-8', 'replace'))
-        serial.write(chr(0x00))
-        serial.write(chr(0x00))
-        serial.write(chr(0x02))
-        serial.write(chr(0x20))
+        self.ser.write(char.encode('UTF-8', 'replace'))
+        ser.write(chr(0x00))
+        ser.write(chr(0x00))
+        ser.write(chr(0x02))
+        ser.write(chr(0x20))
 
-        serial.write(chr(0x00))
-        serial.write(chr(0x00))
-        serial.write(chr(0x03))
-        serial.write(chr(0x20))
+        ser.write(chr(0x00))
+        ser.write(chr(0x00))
+        ser.write(chr(0x03))
+        ser.write(chr(0x20))
         
-        serial.write(chr(0x00))
-        serial.write(chr(0x00))
-        serial.write(chr(0x04))
-        serial.write(chr(0x20))
+        ser.write(chr(0x00))
+        ser.write(chr(0x00))
+        ser.write(chr(0x04))
+        ser.write(chr(0x20))
 
-        serial.write(chr(0xff))
-        serial.write(chr(0xff))
-        serial.write(chr(0xff))
-        serial.write(chr(0xff))
+        ser.write(chr(0xff))
+        ser.write(chr(0xff))
+        ser.write(chr(0xff))
+        ser.write(chr(0xff))
 
     def __on_exit(self, event):
         #self.__stop_thread()
-        self.serial.close()
+        self.ser.close()
         self.Destroy()
 
     def __on_help(self, event):
