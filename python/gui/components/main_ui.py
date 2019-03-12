@@ -61,17 +61,8 @@ class MicompsFrame(wx.Frame):
         self.lists = []
         #self.serial = serial.Serial()
 
-        ser = serial.Serial(
-        #port=puerto,	#Configurar con el puerto
-            port = "/dev/ttyUSB1",
-            baudrate=19200,
-            parity=serial.PARITY_NONE,      #Sin bit de paridad
-            stopbits=serial.STOPBITS_ONE,   #1 bit de stop
-            bytesize=serial.EIGHTBITS       #1 byte de dato
-        )
-        ser.isOpen()
 
-        self.serial.timeout = 0
+        #self.serial.timeout = 0
         self.thread = None
         self.alive = threading.Event()
 
@@ -561,7 +552,7 @@ class MicompsFrame(wx.Frame):
         self.step1_input_tuples = [
             ("PC", binary_to_dec.strbin_to_udec(str(data[34:66]))),
             ("Instruccion (binary)", str(data[66:98])),
-            ("Instruccion (assembly code)", instruction_decode.get_instruction(str(data[66:98]))),
+            ("Instruccion (assembly code)", str(data[66:98])),
             ("Stop Pipe", str(data[98]))
         ]
         self.step1_output_tuples = []
@@ -683,17 +674,31 @@ class MicompsFrame(wx.Frame):
                 ok = True
 
     def __on_run(self, event):
+        ser = serial.Serial(
+        #port=puerto,	#Configurar con el puerto
+            port = "/dev/ttyUSB1",
+            baudrate=19200,
+            parity=serial.PARITY_NONE,      #Sin bit de paridad
+            stopbits=serial.STOPBITS_ONE,   #1 bit de stop
+            bytesize=serial.EIGHTBITS       #1 byte de dato
+        )
+        ser.isOpen()
         char = 2
         char = unichr(char)
         print "Modo fast"
-        self.ser.write(char.encode('UTF-8', 'replace'))
+        ser.write(char.encode('UTF-8', 'replace'))
         time.sleep(0.5)
-        newFile = open("file1.txt","wb")
+        #newFile = open("file1.txt","wb")
+        data = []
         for i in range(324):
-            newFile.write("{0:08b}".format(ord(self.ser.read(1))) + "\n")
-
-        data_from_fpga = self.simula_recepcion_datos()
-        data_from_fpga = self.merge_list(data_from_fpga)
+            data.append("{0:08b}".format(ord(ser.read(1))) + "\n")
+        import pdb;pdb.set_trace()
+        for idx,val in enumerate(data):
+            data[idx] = val.replace("\n","")
+        #data = data.replace("\n","")
+        #data_from_fpga = self.simula_recepcion_datos()
+        data_from_fpga = self.merge_list(data)
+        import pdb;pdb.set_trace()
         self.__update_fields(data_from_fpga)
 
 
