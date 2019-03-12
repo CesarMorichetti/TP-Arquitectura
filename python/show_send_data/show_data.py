@@ -60,8 +60,8 @@ senal y registros.
 def mem_wb(data):
     output_mem = data[0:32]
     alu_res = data[32:64]
-    addr_reg_dst = data[64:68]
-    pc_to_reg = data[68:100]
+    addr_reg_dst = data[64:69]
+    pc_to_reg = data[69:101]
     write_pc = data[101]
     regwrite = data[102]
     memtoreg = data[103]
@@ -94,12 +94,12 @@ def ex_mem(data):
     alu_res         = data[64:96]
     rt_reg          = data[96:128]
     addr_reg_dst    = data[128:133]    
-    write_pc        = data[134]
-    take            = data[135]
-    regWrite        = data[136]
-    memtoreg        = data[137]
-    memwrite        = data[138]
-    memread         = data[139]
+    write_pc        = data[133]
+    take            = data[134]
+    regWrite        = data[135]
+    memtoreg        = data[136]
+    memwrite        = data[137]
+    memread         = data[138]
     load_store_type = data[139:142]
     stop_pipe       = data[142]
 
@@ -176,19 +176,14 @@ def print_func(data, bits, decimal=True, hexa=True, binary=True):
 Lee archivo con informacion del debuger.
 """
 def simula_recepcion_datos():
-    f = open("files_from_fpga/file1.txt","r")
+    f = open("files_from_fpga/file_2.txt","r")
     cont = f.read()
     cont = cont.replace("\n","")
     read = [cont[i:i+8] for i in range(0, 2592, 8)]
     #print read
     return read
 
-if __name__ == "__main__":
-
-    data_from_fpga = simula_recepcion_datos()
-    data_from_fpga = merge_list(data_from_fpga)
-    #print len(data_from_fpga)
-
+def main(data_from_fpga):
     reg_mem_wb, reg_data_mem, reg_ex_mem, reg_id_ex, reg_reg,\
     reg_if_id, reg_clk_count = split_data(data_from_fpga, 0)
 
@@ -259,3 +254,11 @@ if __name__ == "__main__":
     print "Latch mem_wb memtoreg:  ", print_func(mem_wb_memtoreg, 1, True ,True ,True)
     print "Latch mem_wb stop_pipe: ", print_func(mem_wb_stop_pipe, 1, True ,True ,True)
     print "****************************************************************"
+    
+if __name__ == "__main__":
+
+    data_from_fpga = simula_recepcion_datos()
+    data_from_fpga = merge_list(data_from_fpga)
+    #print len(data_from_fpga)
+    main(data_from_fpga)
+

@@ -17,16 +17,25 @@ module Latch_IF_ID(
     
     always@(posedge clk)
     begin
-        if(~rst || is_jump_taken)begin
+        if(~rst)begin
             o_instruction <= 0;
             o_pc          <= 0;
             os_stop_pipe  <= 0;
         end
         else begin
-            if(is_write_IF_ID && i_step)begin
-                o_pc          <= i_pc;
-                o_instruction <= i_instruction;
-                os_stop_pipe  <= is_stop_pipe;
+            if(i_step)begin
+                if(is_jump_taken)begin
+                    o_instruction <= 0;
+                    o_pc          <= 0;
+                    os_stop_pipe  <= 0;
+                end
+                else begin
+                    if(is_write_IF_ID)begin
+                        o_pc          <= i_pc;
+                        o_instruction <= i_instruction;
+                        os_stop_pipe  <= is_stop_pipe;
+                    end
+                end
             end
         end
     end

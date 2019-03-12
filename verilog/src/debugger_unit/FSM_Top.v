@@ -41,11 +41,13 @@ module FSM_Top(
 
     wire load_done;
     wire fast_done;
-    //wire step_done;
+    wire step_done;
     wire send_done;
 
     wire step_signal_from_fast;
     wire start_send_from_fast;
+    wire step_signal_from_step;
+    wire start_send_from_step;
     wire [31 : 0] bus_clk_count_from_fast;
     
     always@(posedge clk)begin
@@ -181,10 +183,10 @@ module FSM_Top(
             step: begin
                 o_led      = 0;
                 o_reset_pipe = 1;
-                state_next = idle; 
+                state_next = wait_step; 
                 start_load = 1'b0;
                 start_fast = 1'b0;
-                start_step = 1'b0;
+                start_step = 1'b1;
                 o_step     = 1'b0;
                 clk_count  = 0;
                 start_send = 0;
@@ -192,13 +194,24 @@ module FSM_Top(
             wait_step: begin
                 o_led      = 0;
                 o_reset_pipe = 1;
-                state_next = idle; 
-                start_load = 1'b0;
-                start_fast = 1'b0;
-                start_step = 1'b0;//lo que venga de fsm de step
-                o_step     = 1'b0;
-                clk_count  = 0;
-                start_send = 0;
+                if(step_done)begin
+                    state_next = idle; 
+                    start_load = 1'b0;
+                    start_fast = 1'b0;
+                    start_step = 1'b0;
+                    o_step     = step_signal_from_step;
+                    clk_count  = 0;
+                    start_send = start_send_from_step;
+                end
+                else begin
+                    state_next = wait_step; 
+                    start_load = 1'b0;
+                    start_fast = 1'b0;
+                    start_step = 1'b0;
+                    o_step     = step_signal_from_step;
+                    clk_count  = 0;
+                    start_send = start_send_from_step;
+                end
             end
             default: begin
                 o_led      = 0;
@@ -250,4 +263,16 @@ module FSM_Top(
                        .os_done(send_done)
                        );
 
+    FSM_Step u_FSM_Step(
+                      .clk(clk),
+                      .rst(rst),
+                      .is_start(start_step),
+                      .is_done_send(send_done),
+                      .is_stop_pipe(is_stop_pipe),
+                      .i_rx_data(i_rx_data),
+                      .is_rx_done(is_rx_done),
+                      .os_step(step_signal_from_step),
+                      .os_start_send(start_send_from_step),
+                      .os_done(step_done)
+                      );
     endmodule

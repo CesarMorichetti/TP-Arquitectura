@@ -40,7 +40,7 @@ module Latch_EX_MEM(
 
 
     always@(posedge clk)begin
-        if(~rst || is_jump_taken)begin
+        if(~rst)begin
             o_jump              <= 0;
             o_pc_to_reg         <= 0;
             o_ALU_res           <= 0;
@@ -58,20 +58,38 @@ module Latch_EX_MEM(
         end
         else begin
             if(i_step) begin
-                o_jump              <= i_jump;
-                o_pc_to_reg         <= i_pc_to_reg;
-                o_ALU_res           <= i_ALU_res;
-                o_rt_reg            <= i_rt_reg;
-                o_addr_reg_dst      <= i_addr_reg_dst;
-                os_write_pc         <= is_write_pc;
-                os_taken            <= is_taken;
-                //os_select_addr_reg  <= is_select_addr_reg;
-                os_RegWrite         <= is_RegWrite;
-                os_MemtoReg         <= is_MemtoReg;
-                os_MemWrite         <= is_MemWrite;              
-                os_MemRead          <= is_MemRead; 
-                os_load_store_type  <= is_load_store_type;
-                os_stop_pipe        <= is_stop_pipe;
+                if(is_jump_taken)begin
+                    o_jump              <= 0;
+                    o_pc_to_reg         <= 0;
+                    o_ALU_res           <= 0;
+                    o_rt_reg            <= 0;
+                    o_addr_reg_dst      <= 0;
+                    os_write_pc         <= 0;
+                    os_taken            <= 0;
+                    //os_select_addr_reg  <= 0;
+                    os_RegWrite         <= 0;
+                    os_MemtoReg         <= 0;
+                    os_MemWrite         <= 0;              
+                    os_MemRead          <= 0; 
+                    os_load_store_type  <= 0;
+                    os_stop_pipe        <= 0;
+                end
+                else begin
+                    o_jump              <= i_jump;
+                    o_pc_to_reg         <= i_pc_to_reg;
+                    o_ALU_res           <= i_ALU_res;
+                    o_rt_reg            <= i_rt_reg;
+                    o_addr_reg_dst      <= i_addr_reg_dst;
+                    os_write_pc         <= is_write_pc;
+                    os_taken            <= is_taken;
+                    //os_select_addr_reg  <= is_select_addr_reg;
+                    os_RegWrite         <= is_RegWrite;
+                    os_MemtoReg         <= is_MemtoReg;
+                    os_MemWrite         <= is_MemWrite;              
+                    os_MemRead          <= is_MemRead; 
+                    os_load_store_type  <= is_load_store_type;
+                    os_stop_pipe        <= is_stop_pipe;
+                end
             end
         end
     end

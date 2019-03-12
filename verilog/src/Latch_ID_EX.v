@@ -49,7 +49,7 @@ module Latch_ID_EX(
     
     always@(posedge clk)
     begin
-        if(~rst || is_jump_taken)begin
+        if(~rst)begin
             o_rt_addr           <= 0;
             o_rd_addr           <= 0;
             o_rs_addr           <= 0;
@@ -73,26 +73,50 @@ module Latch_ID_EX(
         end
         else begin
             if(i_step)begin
-                o_rt_addr           <= i_rt_addr;
-                o_rd_addr           <= i_rd_addr;
-                o_rs_addr           <= i_rs_addr;
-                o_sig_extended      <= i_sig_extended;
-                o_rs_reg            <= i_rs_reg;
-                o_rt_reg            <= i_rt_reg;
-                o_pc                <= i_pc;
-                o_jump_address      <= i_jump_address;
-                os_RegDst           <= is_RegDst;
-                os_MemRead          <= is_MemRead;
-                os_MemWrite         <= is_MemWrite;
-                os_MemtoReg         <= is_MemtoReg;
-                os_ALUop            <= is_ALUop;
-                os_ALUsrc           <= is_ALUsrc;
-                os_RegWrite         <= is_RegWrite;
-                os_shmat            <= is_shmat;
-                os_load_store_type  <= is_load_store_type;
-                o_op                <= i_op;
-                os_stall            <= is_stall;
-                os_stop_pipe        <= is_stop_pipe;
+                if(is_jump_taken)begin
+                    o_rt_addr           <= 0;
+                    o_rd_addr           <= 0;
+                    o_rs_addr           <= 0;
+                    o_sig_extended      <= 0;
+                    o_rs_reg            <= 0;
+                    o_rt_reg            <= 0;
+                    o_pc                <= 0;
+                    o_jump_address      <= 0;
+                    os_RegDst           <= 0;
+                    os_MemRead          <= 0;
+                    os_MemWrite         <= 0;
+                    os_MemtoReg         <= 0;
+                    os_ALUop            <= 0;
+                    os_ALUsrc           <= 0;
+                    os_RegWrite         <= 0;
+                    os_shmat            <= 0;
+                    os_load_store_type  <= 0;
+                    o_op                <= 0; 
+                    os_stall            <= 0;
+                    os_stop_pipe        <= 0;
+                end
+                else begin
+                    o_rt_addr           <= i_rt_addr;
+                    o_rd_addr           <= i_rd_addr;
+                    o_rs_addr           <= i_rs_addr;
+                    o_sig_extended      <= i_sig_extended;
+                    o_rs_reg            <= i_rs_reg;
+                    o_rt_reg            <= i_rt_reg;
+                    o_pc                <= i_pc;
+                    o_jump_address      <= i_jump_address;
+                    os_RegDst           <= is_RegDst;
+                    os_MemRead          <= is_MemRead;
+                    os_MemWrite         <= is_MemWrite;
+                    os_MemtoReg         <= is_MemtoReg;
+                    os_ALUop            <= is_ALUop;
+                    os_ALUsrc           <= is_ALUsrc;
+                    os_RegWrite         <= is_RegWrite;
+                    os_shmat            <= is_shmat;
+                    os_load_store_type  <= is_load_store_type;
+                    o_op                <= i_op;
+                    os_stall            <= is_stall;
+                    os_stop_pipe        <= is_stop_pipe;
+                end
             end
         end
     end

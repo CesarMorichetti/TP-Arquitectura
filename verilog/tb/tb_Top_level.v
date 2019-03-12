@@ -41,6 +41,30 @@ module tb_Toplevel();
         #91560
         i_rx_data = 1;
 
+        /*
+        #5000
+        i_rx_data = 0;
+        //byte = 00000001
+        #143970
+        i_rx_data = 1;   
+        #143970
+        i_rx_data = 1;
+        #91560
+        i_rx_data = 1;
+        #91560
+        i_rx_data = 1;
+        #91560
+        i_rx_data = 0;
+        #91560
+        i_rx_data = 0;
+        #91560
+        i_rx_data = 0;
+        #104640
+        i_rx_data = 0;
+        //finaliza rx
+        #80000
+        i_rx_data = 1;
+*/
 /*
         //arranca rx
         #49200
