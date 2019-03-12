@@ -1,3 +1,4 @@
 *.DS_Store
 python/asm2bin/__pycache__
 python/asm2bin/salida.mem
+*.pyc

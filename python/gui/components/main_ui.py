@@ -59,10 +59,10 @@ class MicompsFrame(wx.Frame):
         self.pipeline_tuples = []
 
         self.lists = []
-        #self.serial = serial.Serial()
+        self.serial = serial.Serial()
 
 
-        #self.serial.timeout = 0
+        self.serial.timeout = 0
         self.thread = None
         self.alive = threading.Event()
 
@@ -72,7 +72,7 @@ class MicompsFrame(wx.Frame):
         self.__do_layout()
         self.__set_events()
 
-        #self.__on_port_settings(None)  # call setup dialog on startup, opens port
+        self.__on_port_settings(None)  # call setup dialog on startup, opens port
         #if not self.alive.isSet():
         #    self.Close()
 
@@ -86,7 +86,7 @@ class MicompsFrame(wx.Frame):
         self.itemRun = self.file.Append(wx.ID_ANY, "&Modo Fast\tCtrl+Shift+F5", " Ejecuta todas las instrucciones")    
         self.itemStep = self.file.Append(wx.ID_ANY, "&Modo Step by Step\tCtrl+F5", " Selecciona el modo step by step")
 
-        self.itemClock = self.file.Append(wx.ID_ANY, "&Clock\tCtrl+F5", " Siguiente paso del modo step by step")
+        self.itemClock = self.file.Append(wx.ID_ANY, "&Step\tCtrl+F5", " Siguiente paso del modo step by step")
         self.itemLoad = self.file.Append(wx.ID_ANY, "&Load\tF5", " Load a FPGA")
         self.file.AppendSeparator()
         self.itemExit = self.file.Append(wx.ID_EXIT, "&Exit\tCtrl+Q", " Cierra el programa")
@@ -102,7 +102,7 @@ class MicompsFrame(wx.Frame):
         self.button_port_settings = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "PORT SETTINGS", pos=(-1, -1),
                                               size=(100, -1))
         self.button_step = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Modo Step by Step", pos=(-1, -1), size=(-1, -1))
-        self.button_clock = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Siguiente clock", pos=(-1, -1), size=(-1, -1))
+        self.button_clock = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Siguiente step", pos=(-1, -1), size=(-1, -1))
         self.button_run = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Modo Fast", pos=(-1, -1), size=(-1, -1))
         self.button_load = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Load FPGA", pos=(-1, -1),
                                                size=(100, -1))
@@ -217,7 +217,7 @@ class MicompsFrame(wx.Frame):
         self.SetTitle("MIcomPS")
         self.SetSize((700, 500))
         self.main_frame_statusbar.SetStatusWidths([-1])
-        self.main_frame_statusbar.SetStatusText("Disconnected", 0)
+        self.main_frame_statusbar.SetStatusText("Desconectado", 0)
 
     def __do_layout(self):
         sizer_registers_bank = wx.BoxSizer(wx.VERTICAL)
@@ -633,8 +633,6 @@ class MicompsFrame(wx.Frame):
         self.pipeline_tuples = []
         self.pipeline_tuples = [
             ("Clock", binary_to_dec.strbin_to_dec(str(data[2487:2519]))),
-            ("ALU result", binary_to_dec.strbin_to_dec(str(data[2519:2551])))
-
 
         ]
 
@@ -642,7 +640,7 @@ class MicompsFrame(wx.Frame):
         if event is not None:
             self.__stop_thread()
             self.serial.close()
-            self.main_frame_statusbar.SetStatusText("Disconnected", 0)
+            self.main_frame_statusbar.SetStatusText("Desconectado", 0)
         ok = False
         while not ok:
             with serial_config_dialog.SerialConfigDialog(self, -1, "",
@@ -665,102 +663,73 @@ class MicompsFrame(wx.Frame):
                                                                      self.serial.stopbits,
                                                                      ' RTS/CTS' if self.serial.rtscts else '',
                                                                      ' Xon/Xoff' if self.serial.xonxoff else '',))
-                    self.main_frame_statusbar.SetStatusText("Connected", 0)
+                    self.main_frame_statusbar.SetStatusText("Conectado", 0)
                     ok = True
             else:
                 # on startup, dialog aborted
-                self.main_frame_statusbar.SetStatusText("Connected", 0)
+                self.main_frame_statusbar.SetStatusText("Conectado", 0)
                 self.alive.clear()
                 ok = True
 
     def __on_run(self, event):
-        ser = serial.Serial(
-        #port=puerto,	#Configurar con el puerto
-            port = "/dev/ttyUSB1",
-            baudrate=19200,
-            parity=serial.PARITY_NONE,      #Sin bit de paridad
-            stopbits=serial.STOPBITS_ONE,   #1 bit de stop
-            bytesize=serial.EIGHTBITS       #1 byte de dato
-        )
-        ser.isOpen()
         char = 2
         char = unichr(char)
         print "Modo fast"
-        ser.write(char.encode('UTF-8', 'replace'))
+        self.serial.write(char.encode('UTF-8', 'replace'))
         time.sleep(0.5)
-        #newFile = open("file1.txt","wb")
         data = []
         for i in range(324):
-            data.append("{0:08b}".format(ord(ser.read(1))) + "\n")
-        import pdb;pdb.set_trace()
+            data.append("{0:08b}".format(ord(self.serial.read(1))) + "\n")
         for idx,val in enumerate(data):
             data[idx] = val.replace("\n","")
-        #data = data.replace("\n","")
-        #data_from_fpga = self.simula_recepcion_datos()
         data_from_fpga = self.merge_list(data)
-        import pdb;pdb.set_trace()
         self.__update_fields(data_from_fpga)
 
 
     def __on_clock(self, event):
         char = 15
         char = unichr(char)
-        print "Siguiente clock"
-        self.ser.write(char.encode('UTF-8', 'replace'))
+        print "Siguiente step"
+        self.serial.write(char.encode('UTF-8', 'replace'))
         time.sleep(0.5)
-
-        newFile = open("file1.txt","wb")
+        data = []
         for i in range(324):
-            newFile.write("{0:08b}".format(ord(ser.read(1))) + "\n")
-
-        data_from_fpga = self.simula_recepcion_datos()
-        data_from_fpga = self.merge_list(data_from_fpga)
+            data.append("{0:08b}".format(ord(self.serial.read(1))) + "\n")
+        for idx,val in enumerate(data):
+            data[idx] = val.replace("\n","")
+        data_from_fpga = self.merge_list(data)
         self.__update_fields(data_from_fpga)
     
     def __on_step(self, event):
         char = 3
         char = unichr(char)
         print "Modo step by step"
-        self.ser.write(char.encode('UTF-8', 'replace'))
+        self.serial.write(char.encode('UTF-8', 'replace'))
         time.sleep(0.5)
-
-        newFile = open("file1.txt","wb")
-        for i in range(324):
-            newFile.write("{0:08b}".format(ord(ser.read(1))) + "\n")
-
-        data_from_fpga = self.simula_recepcion_datos()
-        data_from_fpga = self.merge_list(data_from_fpga)
-        self.__update_fields(data_from_fpga)
+        
 
     def __on_load(self, event):
-        print "Load"
-        char = 3
+        char = 1
         char = unichr(char)
         print "Modo load"
-        self.ser.write(char.encode('UTF-8', 'replace'))
-        ser.write(chr(0x00))
-        ser.write(chr(0x00))
-        ser.write(chr(0x02))
-        ser.write(chr(0x20))
-
-        ser.write(chr(0x00))
-        ser.write(chr(0x00))
-        ser.write(chr(0x03))
-        ser.write(chr(0x20))
-        
-        ser.write(chr(0x00))
-        ser.write(chr(0x00))
-        ser.write(chr(0x04))
-        ser.write(chr(0x20))
-
-        ser.write(chr(0xff))
-        ser.write(chr(0xff))
-        ser.write(chr(0xff))
-        ser.write(chr(0xff))
+        self.serial.write(char.encode('UTF-8', 'replace'))
+        f = open("clear.mem","r")
+        cont = f.read()
+        print cont
+        cont = cont.replace("\n","")
+        send = [cont[i : i+8] for i in range(0, len(cont), 8)]
+        send_chr = [chr(int("0b"+i,2)) for i in send]
+        for i in range(0, len(send_chr), 4):
+            aux = send_chr[i:i+4]
+            print aux
+            for j in reversed(aux):
+                self.serial.write(j)
+                #print j
+        print "programa cargado"
 
     def __on_exit(self, event):
         #self.__stop_thread()
-        self.ser.close()
+        self.serial.close()
         self.Destroy()
 
     def __on_help(self, event):
