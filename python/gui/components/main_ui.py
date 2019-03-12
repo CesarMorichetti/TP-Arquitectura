@@ -88,6 +88,8 @@ class MicompsFrame(wx.Frame):
 
         self.itemClock = self.file.Append(wx.ID_ANY, "&Step\tCtrl+F5", " Siguiente paso del modo step by step")
         self.itemLoad = self.file.Append(wx.ID_ANY, "&Load\tF5", " Load a FPGA")
+        self.itemConv = self.file.Append(wx.ID_ANY, "&Convert\tF5", " Convertir ASM to BIN")
+
         self.file.AppendSeparator()
         self.itemExit = self.file.Append(wx.ID_EXIT, "&Exit\tCtrl+Q", " Cierra el programa")
         self.itemHelp = self.help.Append(wx.ID_HELP_CONTENTS, "&Ayuda\tF1", " Muestra el ayuda")
@@ -106,6 +108,8 @@ class MicompsFrame(wx.Frame):
         self.button_run = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Modo Fast", pos=(-1, -1), size=(-1, -1))
         self.button_load = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Load FPGA", pos=(-1, -1),
                                                size=(100, -1))
+        self.button_convert = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Convertir ASM a BIN", pos=(-1, -1),
+                                               size=(100, -1))                                       
         self.main_frame_toolbar.AddControl(self.button_port_settings)
         self.main_frame_toolbar.AddSeparator()
         self.main_frame_toolbar.AddControl(self.button_step)
@@ -114,6 +118,7 @@ class MicompsFrame(wx.Frame):
         self.main_frame_toolbar.AddControl(self.button_run)
         self.main_frame_toolbar.AddSeparator()
         self.main_frame_toolbar.AddControl(self.button_load)
+        self.main_frame_toolbar.AddControl(self.button_convert)
         self.main_frame_toolbar.Realize()
         self.SetToolBar(self.main_frame_toolbar)
 
@@ -131,15 +136,10 @@ class MicompsFrame(wx.Frame):
         self.panel_pipeline = wx.Panel(self.main_notebook, wx.ID_ANY)
 
         self.panel_left_step1 = wx.Panel(self.panel_step1, wx.ID_ANY)
-        #self.panel_right_step1 = wx.Panel(self.panel_step1, wx.ID_ANY)
         self.panel_left_step2 = wx.Panel(self.panel_step2, wx.ID_ANY)
-        #self.panel_right_step2 = wx.Panel(self.panel_step2, wx.ID_ANY)
         self.panel_left_step3 = wx.Panel(self.panel_step3, wx.ID_ANY)
-        #self.panel_right_step3 = wx.Panel(self.panel_step3, wx.ID_ANY)
         self.panel_left_step4 = wx.Panel(self.panel_step4, wx.ID_ANY)
-        #self.panel_right_step4 = wx.Panel(self.panel_step4, wx.ID_ANY)
         self.panel_left_step5 = wx.Panel(self.panel_step5, wx.ID_ANY)
-        #self.panel_right_step5 = wx.Panel(self.panel_step5, wx.ID_ANY)
 
         self.__make_titles()
         self.__make_lists()
@@ -149,24 +149,19 @@ class MicompsFrame(wx.Frame):
                                                         "ESTADO DE LOS REGISTROS", style=wx.ALIGN_CENTER)
         self.label_title_left_step1 = wx.StaticText(self.panel_left_step1, wx.ID_ANY, "DATOS",
                                                     style=wx.ALIGN_CENTER)
-        #self.label_title_right_step1 = wx.StaticText(self.panel_right_step1, wx.ID_ANY, "OUTPUTS",
-        #                                             style=wx.ALIGN_CENTER)
+        
         self.label_title_left_step2 = wx.StaticText(self.panel_left_step2, wx.ID_ANY, "DATOS",
                                                     style=wx.ALIGN_CENTER)
-        #self.label_title_right_step2 = wx.StaticText(self.panel_right_step2, wx.ID_ANY, "OUTPUTS",
-        #                                             style=wx.ALIGN_CENTER)
+        
         self.label_title_left_step3 = wx.StaticText(self.panel_left_step3, wx.ID_ANY, "DATOS",
                                                     style=wx.ALIGN_CENTER)
-        #self.label_title_right_step3 = wx.StaticText(self.panel_right_step3, wx.ID_ANY, "OUTPUTS",
-        #                                             style=wx.ALIGN_CENTER)
+        
         self.label_title_left_step4 = wx.StaticText(self.panel_left_step4, wx.ID_ANY, "DATOS",
                                                     style=wx.ALIGN_CENTER)
-        #self.label_title_right_step4 = wx.StaticText(self.panel_right_step4, wx.ID_ANY, "OUTPUTS",
-        #                                             style=wx.ALIGN_CENTER)
+        
         self.label_title_left_step5 = wx.StaticText(self.panel_left_step5, wx.ID_ANY, "DATOS",
                                                     style=wx.ALIGN_CENTER)
-        #self.label_title_right_step5 = wx.StaticText(self.panel_right_step5, wx.ID_ANY, "OUTPUTS",
-        #                                             style=wx.ALIGN_CENTER)
+        
         self.label_title_pipeline = wx.StaticText(self.panel_pipeline, wx.ID_ANY, "DATOS",
                                                    style=wx.ALIGN_CENTER)
 
@@ -200,11 +195,7 @@ class MicompsFrame(wx.Frame):
         self.list_pipeline = AutoWidthListCtrl(self.panel_pipeline)
         self.list_pipeline.InsertColumn(wx.ID_ANY, 'Nombre', width=-1)
         self.list_pipeline.InsertColumn(wx.ID_ANY, 'Valor', width=-1)
-        # self.list_pipeline.InsertColumn(wx.ID_ANY, 'Step', width=-1)
-        # self.list_pipeline.InsertColumn(wx.ID_ANY, 'Step', width=-1)
-        # self.list_pipeline.InsertColumn(wx.ID_ANY, 'Step', width=-1)
-        # self.list_pipeline.InsertColumn(wx.ID_ANY, 'Step', width=-1)
-        # self.list_pipeline.InsertColumn(wx.ID_ANY, 'Step', width=-1)
+        
 
         self.lists = [self.list_registers, self.list_inputs_step1,
                       self.list_inputs_step2, 
@@ -291,6 +282,8 @@ class MicompsFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.__on_step, self.itemStep)
         self.Bind(wx.EVT_MENU, self.__on_clock, self.itemClock)
         self.Bind(wx.EVT_MENU, self.__on_load, self.itemLoad)
+        self.Bind(wx.EVT_MENU, self.__on_convert, self.itemConv)
+
         self.Bind(wx.EVT_MENU, self.__on_exit, self.itemExit)
         self.Bind(wx.EVT_MENU, self.__on_help, self.itemHelp)
         self.Bind(wx.EVT_MENU, self.__on_about, self.itemAbout)
@@ -299,6 +292,8 @@ class MicompsFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.__on_step, self.button_step)
         self.Bind(wx.EVT_BUTTON, self.__on_run, self.button_run)
         self.Bind(wx.EVT_BUTTON, self.__on_load, self.button_load)
+        self.Bind(wx.EVT_BUTTON, self.__on_convert, self.button_convert)
+
         self.Bind(EVT_SERIALRX, self.__on_serial_read)
 
     def __start_thread(self):
@@ -416,38 +411,14 @@ class MicompsFrame(wx.Frame):
                     lista_tuplas = self.step5_input_tuples
                 elif i == 6:
                      lista_tuplas = self.pipeline_tuples
-                # elif i == 7:
-                #     lista_tuplas = self.step4_input_tuples
-                # elif i == 8:
-                #     lista_tuplas = self.step4_output_tuples
-                # elif i == 9:
-                #     lista_tuplas = self.step5_input_tuples
-                # elif i == 10:
-                #     lista_tuplas = self.step5_output_tuples
+                
 
                 for tupla in lista_tuplas:
                     index = lista.InsertItem(sys.maxint, tupla[0])
                     lista.SetItem(index, 1, tupla[1])
                     lista.SetColumnWidth(0, wx.LIST_AUTOSIZE)
                     lista.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-            # elif i > 10:
-            #     if lista.GetItemCount() > 0:
-            #         lista.DeleteAllItems()
-
-            #     lista_tuplas = self.pipeline_tuples
-
-            #     for tupla in lista_tuplas:
-            #         index = lista.InsertItem(sys.maxint, tupla[0])
-            #         lista.SetItem(index, 1, tupla[1])
-                    
-                    
-            #         lista.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-            #         lista.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-                    # lista.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-                    # lista.SetColumnWidth(3, wx.LIST_AUTOSIZE)
-                    # lista.SetColumnWidth(4, wx.LIST_AUTOSIZE)
-                    # lista.SetColumnWidth(5, wx.LIST_AUTOSIZE)
-                    # lista.SetColumnWidth(6, wx.LIST_AUTOSIZE)
+            
             i += 1
 
         self.data_recived = ''
@@ -761,7 +732,19 @@ ATAJOS:
         dlg = wx.MessageDialog(self, message, "Acerca de MIcomPS", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
+    
+    def __on_convert(self, event):
+        wildcard = "ASM files (*.asm)|*.asm"
+        dialog = wx.FileDialog(self, "Abrir archivo ASM", wildcard=wildcard,
+                               style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
 
+        if dialog.ShowModal() == wx.ID_CANCEL:
+            return
+
+        path = dialog.GetPath()
+
+        if os.path.exists(path):
+            print "se abrio archivo"
 
 class Micomps_UI(wx.App):
     def __init__(self):
