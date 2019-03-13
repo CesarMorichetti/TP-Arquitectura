@@ -103,22 +103,26 @@ class MicompsFrame(wx.Frame):
 
         self.main_frame_toolbar = wx.ToolBar(self, wx.ID_ANY, style=wx.TB_HORIZONTAL | TB_FLAT)
         self.button_port_settings = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "CONFIGURAR SERIAL", pos=(-1, -1),
-                                              size=(100, -1))
+                                              size=(160, -1))
         self.button_step = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Modo Step by Step", pos=(-1, -1), size=(-1, -1))
         self.button_clock = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Siguiente step", pos=(-1, -1), size=(-1, -1))
         self.button_run = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Modo Fast", pos=(-1, -1), size=(-1, -1))
         self.button_load = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Load FPGA", pos=(-1, -1),
-                                               size=(100, -1))
+                                               size=(80, -1))
         self.button_convert = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Convertir ASM a BIN", pos=(-1, -1),
-                                               size=(100, -1))                                       
+                                               size=(140, -1))                                       
         self.main_frame_toolbar.AddControl(self.button_port_settings)
         self.main_frame_toolbar.AddSeparator()
         self.main_frame_toolbar.AddControl(self.button_step)
 
         self.main_frame_toolbar.AddControl(self.button_clock)
+        self.main_frame_toolbar.AddSeparator()
         self.main_frame_toolbar.AddControl(self.button_run)
         self.main_frame_toolbar.AddSeparator()
+        self.main_frame_toolbar.AddStretchableSpace()
+        self.main_frame_toolbar.AddSeparator()
         self.main_frame_toolbar.AddControl(self.button_load)
+        self.main_frame_toolbar.AddSeparator()
         self.main_frame_toolbar.AddControl(self.button_convert)
         self.main_frame_toolbar.Realize()
         self.SetToolBar(self.main_frame_toolbar)
@@ -207,7 +211,7 @@ class MicompsFrame(wx.Frame):
 
     def __set_properties(self):
         self.SetTitle("MIcomPS")
-        self.SetSize((700, 500))
+        self.SetSize((800, 700))
         self.main_frame_statusbar.SetStatusWidths([-1])
         self.main_frame_statusbar.SetStatusText("Desconectado", 0)
 

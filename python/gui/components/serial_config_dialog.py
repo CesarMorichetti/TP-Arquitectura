@@ -40,7 +40,6 @@ class SerialConfigDialog(wx.Dialog):
         kwds["style"] = wx.DEFAULT_DIALOG_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
         self.label_2 = wx.StaticText(self, -1, "Puerto")
-        self.label_2.SetForegroundColour((0,0,0))
         self.choice_port = wx.Choice(self, -1, choices=[])
         self.label_1 = wx.StaticText(self, -1, "Baudrate")
         self.combo_box_baudrate = wx.ComboBox(self, -1, choices=[], style=wx.CB_DROPDOWN)
@@ -114,7 +113,7 @@ class SerialConfigDialog(wx.Dialog):
             for n, baudrate in enumerate(self.serial.BAUDRATES):
                 self.combo_box_baudrate.Append(str(baudrate))
                 if self.serial.baudrate == baudrate:
-                    preferred_index = n
+                    preferred_index = 13
             if preferred_index is not None:
                 self.combo_box_baudrate.SetSelection(preferred_index)
             else:

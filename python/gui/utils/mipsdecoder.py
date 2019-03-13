@@ -21,7 +21,7 @@ def convert(code):
     codes = instr_decode(instruction)
     func_type = codes[0]
     reg_values = reg_decode(func_type, instruction, args[1:]) #get the numeric values of the registers
-
+    print reg_values
     #the following if statement below prints an error if needed
     if reg_values == None:
         print("Instruccion no valida por None")
