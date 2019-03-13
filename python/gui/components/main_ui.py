@@ -524,7 +524,7 @@ class MicompsFrame(wx.Frame):
         self.step1_input_tuples = [
             ("PC", binary_to_dec.strbin_to_udec(str(data[34:66]))),
             ("Instruccion (binary)", str(data[66:98])),
-            ("Instruccion (assembly code)", str(data[66:98])),
+            ("Instruccion (assembly code)", instruction_decode.get_instruction(str(data[66:98]))),
             ("Stop Pipe", str(data[98]))
         ]
         self.step1_output_tuples = []
