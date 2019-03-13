@@ -9,7 +9,8 @@ module FSM_Step(
                input wire           is_rx_done,
                output reg           os_step,     
                output reg           os_start_send,
-               output reg           os_done
+               output reg           os_done,
+               output wire [31 : 0] o_clk_count
                );
 
     //Estados 
@@ -27,16 +28,28 @@ module FSM_Step(
     reg [3 : 0] state_reg;
     reg [3 : 0] state_next;
     
-    //reg flag_count;
-    //reg flag_clear_count;
-    //reg [31 : 0] count;
+    reg flag_count;
+    reg flag_clear_count;
+    reg [31 : 0] count;
     
     always@(posedge clk)begin
         if(~rst)begin
             state_reg <= idle;
+            count     <= 0;
         end
         else begin
             state_reg <= state_next;
+            if(flag_count  == 1'b1) begin
+                count <= count + 1;
+            end
+            else begin
+                if(flag_clear_count == 1'b1)begin
+                    count <= 0;
+                end
+                else begin
+                    count <= count;
+                end
+            end
         end
     end
     
@@ -48,12 +61,16 @@ module FSM_Step(
                     os_start_send = 1'b0;
                     os_step       = 1'b0;
                     os_done       = 1'b0;
+                    flag_count    = 1'b0;
+                    flag_clear_count = 1'b0;
                 end
                 else begin
                     state_next = idle;
                     os_start_send = 1'b0;
                     os_step       = 1'b0;
                     os_done       = 1'b0;
+                    flag_count    = 1'b0;
+                    flag_clear_count = 1'b0;
                 end
             end
             wait_step_signal: begin
@@ -63,12 +80,16 @@ module FSM_Step(
                         os_start_send = 1'b0;
                         os_step       = 1'b0;
                         os_done       = 1'b0;
+                        flag_count    = 1'b0;
+                        flag_clear_count = 1'b0;
                     end
                     else begin
                         state_next = wait_step_signal;
                         os_start_send = 1'b0;
                         os_step       = 1'b0;
                         os_done       = 1'b0;
+                        flag_count    = 1'b0;
+                        flag_clear_count = 1'b0;
                     end
                 end
                 else begin
@@ -76,6 +97,8 @@ module FSM_Step(
                     os_start_send = 1'b0;
                     os_step       = 1'b0;
                     os_done       = 1'b0;
+                    flag_count    = 1'b0;
+                    flag_clear_count = 1'b0;
                 end
             end
             start_step: begin
@@ -83,24 +106,32 @@ module FSM_Step(
                 os_start_send = 1'b0;
                 os_step       = 1'b1;
                 os_done       = 1'b0;
+                flag_count    = 1'b1;
+                flag_clear_count = 1'b0;
             end
             stop_step: begin
                 state_next = wait_clk;
                 os_start_send = 1'b0;
                 os_step       = 1'b0;
                 os_done       = 1'b0;
+                flag_count    = 1'b0;
+                flag_clear_count = 1'b0;
             end
             wait_clk: begin
                 state_next = start_send;
                 os_start_send = 1'b0;
                 os_step       = 1'b0;
                 os_done       = 1'b0;
+                flag_count    = 1'b0;
+                flag_clear_count = 1'b0;
             end
             start_send: begin
                 state_next = wait_send_done;
                 os_start_send = 1'b1;
                 os_step       = 1'b0;
                 os_done       = 1'b0;
+                flag_count    = 1'b0;
+                flag_clear_count = 1'b0;
             end
             wait_send_done: begin
                 if(is_done_send)begin
@@ -108,12 +139,16 @@ module FSM_Step(
                     os_start_send = 1'b0;
                     os_step       = 1'b0;
                     os_done       = 1'b0;
+                    flag_count    = 1'b0;
+                    flag_clear_count = 1'b0;
                 end
                 else begin
                     state_next = wait_send_done;
                     os_start_send = 1'b0;
                     os_step       = 1'b0;
                     os_done       = 1'b0;
+                    flag_count    = 1'b0;
+                    flag_clear_count = 1'b0;
                 end
             end
             check_stop_pipe: begin
@@ -122,12 +157,16 @@ module FSM_Step(
                     os_start_send = 1'b0;
                     os_step       = 1'b0;
                     os_done       = 1'b0;
+                    flag_count    = 1'b0;
+                    flag_clear_count = 1'b0;
                 end
                 else begin
                     state_next = wait_step_signal;
                     os_start_send = 1'b0;
                     os_step       = 1'b0;
                     os_done       = 1'b0;
+                    flag_count    = 1'b0;
+                    flag_clear_count = 1'b0;
                 end
             end
             ready: begin
@@ -135,13 +174,18 @@ module FSM_Step(
                 os_start_send = 1'b0;
                 os_step       = 1'b0;
                 os_done       = 1'b1;
+                flag_count    = 1'b0;
+                flag_clear_count = 1'b1;
             end
             default: begin
                 state_next = idle;
                 os_start_send = 1'b0;
                 os_step       = 1'b0;
                 os_done       = 1'b0;
+                flag_count    = 1'b0;
+                flag_clear_count = 1'b0;
             end
         endcase
     end
+    assign o_clk_count = count;
 endmodule

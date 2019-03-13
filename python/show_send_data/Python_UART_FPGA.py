@@ -28,7 +28,7 @@ def main():
     ports = list(port_list.comports())
     for p in ports:
         print (p)
-    puerto = str(raw_input("Ingrese puerto: "))
+    #puerto = str(raw_input("Ingrese puerto: "))
     ser = serial.Serial(
         #port=puerto,	#Configurar con el puerto
         port = "/dev/ttyUSB1",

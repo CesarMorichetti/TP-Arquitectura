@@ -49,6 +49,7 @@ module FSM_Top(
     wire step_signal_from_step;
     wire start_send_from_step;
     wire [31 : 0] bus_clk_count_from_fast;
+    wire [31 : 0] bus_clk_count_from_step;
     
     always@(posedge clk)begin
         if(~rst)begin
@@ -200,7 +201,7 @@ module FSM_Top(
                     start_fast = 1'b0;
                     start_step = 1'b0;
                     o_step     = step_signal_from_step;
-                    clk_count  = 0;
+                    clk_count  = bus_clk_count_from_step;
                     start_send = start_send_from_step;
                 end
                 else begin
@@ -209,7 +210,7 @@ module FSM_Top(
                     start_fast = 1'b0;
                     start_step = 1'b0;
                     o_step     = step_signal_from_step;
-                    clk_count  = 0;
+                    clk_count  = bus_clk_count_from_step;
                     start_send = start_send_from_step;
                 end
             end
@@ -273,6 +274,7 @@ module FSM_Top(
                       .is_rx_done(is_rx_done),
                       .os_step(step_signal_from_step),
                       .os_start_send(start_send_from_step),
-                      .os_done(step_done)
+                      .os_done(step_done),
+                      .o_clk_count(bus_clk_count_from_step)
                       );
     endmodule
