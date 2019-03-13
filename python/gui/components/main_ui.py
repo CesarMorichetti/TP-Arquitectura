@@ -13,6 +13,7 @@ import errno
 
 from utils import binary_to_dec
 from utils import instruction_decode
+from utils import mipsdecoder
 from wx import *
 from components import serial_config_dialog
 from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
@@ -80,15 +81,15 @@ class MicompsFrame(wx.Frame):
         self.file = wx.Menu()
         self.help = wx.Menu()
 
-        self.itemPortSettings = self.file.Append(wx.ID_ANY, "&Port Settings\tCtrl+Alt+S",
+        self.itemPortSettings = self.file.Append(wx.ID_ANY, "&Configurar serial\tCtrl+Alt+S",
                                                  " Configuracion puerto serial ")
         self.file.AppendSeparator()
         self.itemRun = self.file.Append(wx.ID_ANY, "&Modo Fast\tCtrl+Shift+F5", " Ejecuta todas las instrucciones")    
         self.itemStep = self.file.Append(wx.ID_ANY, "&Modo Step by Step\tCtrl+F5", " Selecciona el modo step by step")
 
-        self.itemClock = self.file.Append(wx.ID_ANY, "&Step\tCtrl+F5", " Siguiente paso del modo step by step")
-        self.itemLoad = self.file.Append(wx.ID_ANY, "&Load\tF5", " Load a FPGA")
-        self.itemConv = self.file.Append(wx.ID_ANY, "&Convert\tF5", " Convertir ASM to BIN")
+        self.itemClock = self.file.Append(wx.ID_ANY, "&Step\tShift+F5", " Siguiente paso del modo step by step")
+        self.itemLoad = self.file.Append(wx.ID_ANY, "&Load\tF6", " Load a FPGA")
+        self.itemConv = self.file.Append(wx.ID_ANY, "&Convert\tF7", " Convertir ASM to BIN")
 
         self.file.AppendSeparator()
         self.itemExit = self.file.Append(wx.ID_EXIT, "&Exit\tCtrl+Q", " Cierra el programa")
@@ -96,12 +97,12 @@ class MicompsFrame(wx.Frame):
         self.itemAbout = self.help.Append(wx.ID_ABOUT, "&About\tCtrl+A", " Muestra informacion sobre MIcomPS")
 
         self.main_frame_menubar = wx.MenuBar()
-        self.main_frame_menubar.Append(self.file, "&File")
-        self.main_frame_menubar.Append(self.help, "&Help")
+        self.main_frame_menubar.Append(self.file, "&Archivo")
+        self.main_frame_menubar.Append(self.help, "&Ayuda")
         self.SetMenuBar(self.main_frame_menubar)
 
         self.main_frame_toolbar = wx.ToolBar(self, wx.ID_ANY, style=wx.TB_HORIZONTAL | TB_FLAT)
-        self.button_port_settings = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "PORT SETTINGS", pos=(-1, -1),
+        self.button_port_settings = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "CONFIGURAR SERIAL", pos=(-1, -1),
                                               size=(100, -1))
         self.button_step = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Modo Step by Step", pos=(-1, -1), size=(-1, -1))
         self.button_clock = wx.Button(self.main_frame_toolbar, wx.ID_ANY, "Siguiente step", pos=(-1, -1), size=(-1, -1))
@@ -668,6 +669,7 @@ class MicompsFrame(wx.Frame):
             data.append("{0:08b}".format(ord(self.serial.read(1))) + "\n")
         for idx,val in enumerate(data):
             data[idx] = val.replace("\n","")
+        
         data_from_fpga = self.merge_list(data)
         self.__update_fields(data_from_fpga)
     
@@ -684,7 +686,7 @@ class MicompsFrame(wx.Frame):
         char = unichr(char)
         print "Modo load"
         self.serial.write(char.encode('UTF-8', 'replace'))
-        f = open("clear.mem","r")
+        f = open("memoria.mem","r")
         cont = f.read()
         print cont
         cont = cont.replace("\n","")
@@ -696,7 +698,18 @@ class MicompsFrame(wx.Frame):
             for j in reversed(aux):
                 self.serial.write(j)
                 #print j
-        print "programa cargado"
+        self.infoLoad("Se cargó con éxito el programa < memoria.mem >")
+        print "Programa Cargado"
+
+    def infoLoad(parent, message, caption = 'Información de Load FPGA'):
+        dlg = wx.MessageDialog(parent, message, caption, wx.OK | wx.ICON_INFORMATION)
+        dlg.ShowModal()
+        dlg.Destroy()
+
+    def infoConvert(parent, message, caption = 'Información de Convertir ASM a BIN '):
+        dlg = wx.MessageDialog(parent, message, caption, wx.OK | wx.ICON_INFORMATION)
+        dlg.ShowModal()
+        dlg.Destroy()
 
     def __on_exit(self, event):
         #self.__stop_thread()
@@ -706,9 +719,11 @@ class MicompsFrame(wx.Frame):
     def __on_help(self, event):
         message = """FUNCIONALIDADES
 
-- CLOCK: Indicar a la placa que ejecute la siguiente instruccion del programa.
-- RUN: Indicar a la placa que ejecute todas las instrucciones del programa.
-- UPDATE FIELDS: Refrescar los datos desplegados por la interfaz a los valores actuales.
+- MODO FAST: Indicar a la placa que ejecute todas las instrucciones del programa.
+- MODO STEP BY STEP: Indicar a la placa que entre en modo step by step.
+- STEP: Indicar a la placa que ejecute la siguiente instruccion del programa.
+- MODO LOAD: Cargar programa (memoria.mem) a la placa.
+- CONVERTIR ASM TO BIN: Aplicacion para convertir programa en ASM a BIN, escribe archivo (memoria.mem).
 
 
 ATAJOS:
@@ -716,7 +731,6 @@ ATAJOS:
 - Port settings: Ctrl+Alt+S
 - Run: Ctrl+Shift+F5
 - Clock: Ctrl+F5
-- Update fields: F5
 - Exit: Ctrl+Q
 - Help: F1
 - About: Ctrl+A"""
@@ -727,8 +741,8 @@ ATAJOS:
     def __on_about(self, event):
         message = """Simulador de microprocesador MIPS.
         Autores:
-                Diego Garbiglia - diegogarbiglia@gmail.com
-                Cesar Morichetti - cesar.morichetti@gmail.com"""
+              Diego Garbiglia - diegogarbiglia@gmail.com
+              Cesar Morichetti - cesar.morichetti@gmail.com"""
         dlg = wx.MessageDialog(self, message, "Acerca de MIcomPS", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
@@ -744,7 +758,20 @@ ATAJOS:
         path = dialog.GetPath()
 
         if os.path.exists(path):
-            print "se abrio archivo"
+            print path
+            r = open(path, "r")
+            f = open( "memoria.mem","w+")
+            lineas = r.readlines()
+            for linea in lineas:
+                linea = linea[:-1]
+                salida = mipsdecoder.convert(linea)
+                salida = str(salida) + "\n"
+                f.write(salida)
+
+            r.close()
+            f.close()
+            print "Se escribio archivo"
+            self.infoLoad("Se convirtió con éxito el programa, se escribio < memoria.mem >")
 
 class Micomps_UI(wx.App):
     def __init__(self):
