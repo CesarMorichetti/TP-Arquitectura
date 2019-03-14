@@ -44,7 +44,7 @@ class MicompsFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         wx.Frame.__init__(self, *args, **kwds)
 
-        self.data_recived = ''
+        #self.data_recived = ''
         self.registers_tuples = []
         self.step1_input_tuples = []
         self.step1_output_tuples = []
@@ -271,7 +271,7 @@ class MicompsFrame(wx.Frame):
         self.main_notebook.AddPage(self.panel_step1, "Latch -  IF-ID")
         self.main_notebook.AddPage(self.panel_step2, "Latch - ID-EX")
         self.main_notebook.AddPage(self.panel_step3, "Latch - EX-MEM")
-        self.main_notebook.AddPage(self.panel_step4, "Latch - MEMORIA")
+        self.main_notebook.AddPage(self.panel_step4, "MEMORIA")
         self.main_notebook.AddPage(self.panel_step5, "Latch - MEM-WB")
         self.main_notebook.AddPage(self.panel_pipeline, "Clock")
 
@@ -299,30 +299,30 @@ class MicompsFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.__on_load, self.button_load)
         self.Bind(wx.EVT_BUTTON, self.__on_convert, self.button_convert)
 
-        self.Bind(EVT_SERIALRX, self.__on_serial_read)
+        #self.Bind(EVT_SERIALRX, self.__on_serial_read)
 
-    def __start_thread(self):
-        """Start the receiver thread"""
-        self.thread = threading.Thread(target=self.__com_port_thread)
-        self.thread.setDaemon(1)
-        self.alive.set()
-        self.thread.start()
-        self.serial.rts = True
-        self.serial.dtr = True
+    # def __start_thread(self):
+    #     """Start the receiver thread"""
+    #     self.thread = threading.Thread(target=self.__com_port_thread)
+    #     self.thread.setDaemon(1)
+    #     self.alive.set()
+    #     self.thread.start()
+    #     self.serial.rts = True
+    #     self.serial.dtr = True
 
-    def __stop_thread(self):
-        """Stop the receiver thread, wait until it's finished."""
-        if self.thread is not None:
-            self.alive.clear()  # clear alive event for thread
-            self.thread.join()  # wait until thread has finished
-            self.thread = None
+    # def __stop_thread(self):
+    #     """Stop the receiver thread, wait until it's finished."""
+    #     if self.thread is not None:
+    #         self.alive.clear()  # clear alive event for thread
+    #         self.thread.join()  # wait until thread has finished
+    #         self.thread = None
 
-    def __add_data_recived(self, text):
-        self.data_recived += text
+    #def __add_data_recived(self, text):
+    #    self.data_recived += text
 
-    def __on_serial_read(self, event):
-        """Handle input from the serial port."""
-        self.__add_data_recived(event.data)  # str(event.data)
+    #def __on_serial_read(self, event):
+    #    """Handle input from the serial port."""
+    #    self.__add_data_recived(event.data)  # str(event.data)
 
     def __com_port_thread(self):
         """\
@@ -426,7 +426,7 @@ class MicompsFrame(wx.Frame):
             
             i += 1
 
-        self.data_recived = ''
+        # self.data_recived = ''
 
     def __parse_data(self, data):
         self.registers_tuples = []
