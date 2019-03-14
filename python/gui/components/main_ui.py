@@ -608,8 +608,8 @@ class MicompsFrame(wx.Frame):
 
         self.pipeline_tuples = []
         self.pipeline_tuples = [
-            ("Clock", binary_to_dec.strbin_to_dec(str(data[2487:2519]))),
-
+            #("Clock", binary_to_dec.strbin_to_dec(str(data[2487:2519]))),
+            ("Clock", binary_to_dec.strbin_to_dec(str(data[2:34]))),
         ]
 
     def __on_port_settings(self, event):
