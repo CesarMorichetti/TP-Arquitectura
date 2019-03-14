@@ -399,7 +399,7 @@ class MicompsFrame(wx.Frame):
                     lista.SetColumnWidth(2, wx.LIST_AUTOSIZE+80)
                     lista.SetColumnWidth(3, wx.LIST_AUTOSIZE)
 
-            elif (i > 0) and (i < 11):
+            elif (i > 0) and (i < 7):
                 if lista.GetItemCount() > 0:
                     lista.DeleteAllItems()
 
@@ -733,8 +733,11 @@ class MicompsFrame(wx.Frame):
 ATAJOS:
 
 - Port settings: Ctrl+Alt+S
-- Run: Ctrl+Shift+F5
-- Clock: Ctrl+F5
+- Modo Fast: Ctrl+Shift+F5
+- Modo Step by Step: Ctrl+F5
+- Step: Shift+F5
+- Load: F6
+- Convert: F7
 - Exit: Ctrl+Q
 - Help: F1
 - About: Ctrl+A"""
