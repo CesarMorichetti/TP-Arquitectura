@@ -425,5 +425,6 @@ module MIPS(
                          pc_to_reg_latch_wb, write_pc_latch_wb, RegWrite_latch_wb,
                          MemtoReg_latch_wb, stop_pipe_latch_wb
                          };
-    assign o_stop_signal = bus_MUX_stop_pipe; 
+    //assign o_stop_signal = bus_MUX_stop_pipe; 
+    assign o_stop_signal = ~bus_stop_pipe; 
 endmodule   

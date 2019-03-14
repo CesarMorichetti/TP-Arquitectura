@@ -45,10 +45,10 @@ def main():
         print op
 
         if int(op) == 1:
-            
+            archivo = raw_input("Nombre archivo: ") 
             op = 0x01
             ser.write(chr(op))
-            f = open("clear.mem","r")
+            f = open(archivo,"r")
             cont = f.read()
             print cont
             cont = cont.replace("\n","")
@@ -67,8 +67,11 @@ def main():
             print op
             ser.write(chr(op))
             data = []
+            newFile = open("file.txt","wb")
             for i in range(324):
-                data.append("{0:08b}".format(ord(ser.read(1))))
+                aux = "{0:08b}".format(ord(ser.read(1)))
+                data.append(aux)
+                newFile.write(aux)
             
             data = show_data.merge_list(data)
             show_data.main(data)

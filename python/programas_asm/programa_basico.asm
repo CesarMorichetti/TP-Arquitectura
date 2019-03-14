@@ -13,4 +13,4 @@ nop
 nop
 nop
 sw r6 0(r5)
-lb r1 0x5(r2)
+halt

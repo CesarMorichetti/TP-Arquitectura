@@ -176,7 +176,7 @@ def print_func(data, bits, decimal=True, hexa=True, binary=True):
 Lee archivo con informacion del debuger.
 """
 def simula_recepcion_datos():
-    f = open("files_from_fpga/file_2.txt","r")
+    f = open("file.txt","r")
     cont = f.read()
     cont = cont.replace("\n","")
     read = [cont[i:i+8] for i in range(0, 2592, 8)]
@@ -186,13 +186,13 @@ def simula_recepcion_datos():
 def main(data_from_fpga):
     reg_mem_wb, reg_data_mem, reg_ex_mem, reg_id_ex, reg_reg,\
     reg_if_id, reg_clk_count = split_data(data_from_fpga, 0)
-
     print "****************************************************************"
     if_id_pc, if_id_instruction, if_id_stop_pipe = if_id(reg_if_id)
     print "Latch if_id PC:               ", print_func(if_id_pc,32,True,True,True)
     print "Latch if_id Instruction:      ", print_func(if_id_instruction,32,True,True,True)
     print "Latch if_id stop pipe signal: ", print_func(if_id_stop_pipe,1,True,True,True)
     print "****************************************************************"
+    
     registers(reg_reg)
     print "****************************************************************"
     id_ex_rt_addr, id_ex_rd_addr, id_ex_rs_addr, id_ex_sig_extended, \
@@ -240,7 +240,7 @@ def main(data_from_fpga):
     print "Latch ex_mem load_store_type: ", print_func(ex_mem_load_store_type, 2, True, True, True)
     print "Latch ex_mem stop_pipe:       ", print_func(ex_mem_stop_pipe, 1, True, True, True)
     print "****************************************************************"
-    data_memory(reg_data_mem)
+    #data_memory(reg_data_mem)
     print "****************************************************************"
     mem_wb_output_mem, mem_wb_alu_res, mem_wb_addr_reg, mem_wb_pc, \
     mem_wb_write_pc, mem_wb_regwrite, mem_wb_memtoreg, mem_wb_stop_pipe\
@@ -256,7 +256,7 @@ def main(data_from_fpga):
     print "****************************************************************"
     print "clk_count: ", print_func(reg_clk_count, 32, True, True, True)
     return mem_wb_stop_pipe
-    
+    #return "0"
 if __name__ == "__main__":
 
     data_from_fpga = simula_recepcion_datos()

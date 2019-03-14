@@ -195,6 +195,8 @@ def opcode_000010(fields):
 def opcode_000011(fields):
     return "JAL " + binary_to_dec.strbin_to_udec(fields) + ";"
 
+def opcode_111111(fields):
+    return "HALT"
 
 def get_instruction(binary_instruction):
     opcode = binary_instruction[:6]
