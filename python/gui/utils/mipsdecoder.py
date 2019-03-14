@@ -43,7 +43,7 @@ def convert(code):
     #execution for i-type functions
     elif func_type == "i": #("Instruction form: opcode|  rs |  rt |   immediate      ")
         if reg_values[2] < 0:
-            reg_values[2] = (reg_values[2] & 0b11111) 
+            reg_values[2] = (reg_values[2] & 0b1111111111111111) 
         opcode = '{0:06b}'.format(codes[1])
         rs = '{0:05b}'.format(reg_values[0])
         rt = '{0:05b}'.format(reg_values[1])

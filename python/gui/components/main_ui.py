@@ -268,11 +268,11 @@ class MicompsFrame(wx.Frame):
         self.panel_pipeline.SetSizer(sizer_pipeline)
 
         self.main_notebook.AddPage(self.panel_registers_bank, "Banco de Registros")
-        self.main_notebook.AddPage(self.panel_step1, "Etapa 1 - IF")
-        self.main_notebook.AddPage(self.panel_step2, "Etapa 2 - ID")
-        self.main_notebook.AddPage(self.panel_step3, "Etapa 3 - EX")
-        self.main_notebook.AddPage(self.panel_step4, "Etapa 4 - MEM")
-        self.main_notebook.AddPage(self.panel_step5, "Etapa 5 - WB")
+        self.main_notebook.AddPage(self.panel_step1, "Latch -  IF-ID")
+        self.main_notebook.AddPage(self.panel_step2, "Latch - ID-EX")
+        self.main_notebook.AddPage(self.panel_step3, "Latch - EX-MEM")
+        self.main_notebook.AddPage(self.panel_step4, "Latch - MEMORIA")
+        self.main_notebook.AddPage(self.panel_step5, "Latch - MEM-WB")
         self.main_notebook.AddPage(self.panel_pipeline, "Clock")
 
         main_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -536,9 +536,12 @@ class MicompsFrame(wx.Frame):
         self.step2_input_tuples = []
         self.step2_input_tuples = [ 
             ("RT", binary_to_dec.strbin_to_udec(str(data[1123:1128]))),
+            ("RT", str(data[1123:1128])),
             ("RD", binary_to_dec.strbin_to_udec(str(data[1128:1133]))),
+            ("RD", str(data[1128:1133])),
             ("RS", binary_to_dec.strbin_to_udec(str(data[1133:1138]))),
-            ("Sign Exten", binary_to_dec.strbin_to_udec(str(data[1138:1170]))),
+            ("RS", str(data[1133:1138])),
+            ("Sign Exten", str(data[1138:1170])),
             ("Reg RS", binary_to_dec.strbin_to_udec(str(data[1170:1202]))),
             ("Reg RT", binary_to_dec.strbin_to_udec(str(data[1202:1234]))),
             ("PC", str(data[1234:1266])),
@@ -568,7 +571,8 @@ class MicompsFrame(wx.Frame):
             ("ALU result (binary)", str(data[1384:1416])),
 
             ("RT reg", binary_to_dec.strbin_to_dec(str(data[1416:1448]))),
-            ("ADDR reg dst", binary_to_dec.strbin_to_udec(str(data[1448:1453]))),
+            ("ADDR reg dst", str(data[1448:1453])),
+            ("ADDR reg dst", binary_to_dec.strbin_to_dec(str(data[1448:1453]))),
 
             ("WritePC", binary_to_dec.strbin_to_udec(str(data[1453]))),
             ("Take", binary_to_dec.strbin_to_udec(str(data[1454]))),
@@ -576,7 +580,7 @@ class MicompsFrame(wx.Frame):
             ("MemToReg", binary_to_dec.strbin_to_udec(str(data[1456]))),
             ("MemWrite", binary_to_dec.strbin_to_udec(str(data[1457]))),
             ("MemRead", binary_to_dec.strbin_to_udec(str(data[1458]))),
-            ("Load Store type", binary_to_dec.strbin_to_udec(str(data[1459:1462]))),
+            ("Load Store type", str(data[1459:1462])),
             ("Stop Pipe", str(data[1462]))
     
         ]
