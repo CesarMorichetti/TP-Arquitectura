@@ -76,25 +76,6 @@ module Stage_Execution(
                             .o_MUX_B_signal(bus_MUX3to1_B)
                              );
 
-/*  
-    MUX3to1#(.LEN(5)) 
-            u_mux3to1_rs_branch_unit(
-                       .i_selector(bus_MUX3to1_A),
-                       .i_entradaMUX_0(i_rs_reg),
-                       .i_entradaMUX_1(i_MEM_WB_reg),
-                       .i_entradaMUX_2(i_EX_MEM_reg),
-                       .o_salidaMUX(bus_MUX_branch_unit_rs)
-                       );                        
-
-    MUX3to1#(.LEN(5)) 
-            u_mux3to1_rt_branch_unit(
-                       .i_selector(bus_MUX3to1_B),
-                       .i_entradaMUX_0(i_rt_reg),
-                       .i_entradaMUX_1(i_MEM_WB_reg),
-                       .i_entradaMUX_2(i_EX_MEM_reg),
-                       .o_salidaMUX(bus_MUX_branch_unit_rs)
-                       );       
-*/
     branch_unit u_branch_unit(
                             .rst(rst),
                             .i_op(i_op),

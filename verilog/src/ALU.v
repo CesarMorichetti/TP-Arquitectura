@@ -4,7 +4,6 @@ module ALU(
     input wire  [31 : 0] i_A,
     input wire  [31 : 0] i_B,
     input wire  [3  : 0] i_operation,
-    //output wire          o_zero,
     output reg  [31 : 0] o_res
 
     );
@@ -22,8 +21,6 @@ module ALU(
     parameter [3 : 0] SLLV = 4'b1010;  
     parameter [3 : 0] SRLV = 4'b1011;  
     parameter [3 : 0] SRAV = 4'b1100;  
-    //parameter [3 : 0] ADDU = 4'b1101;  
-    //parameter [3 : 0] SUBU = 4'b1110;  
     parameter [3 : 0] LUI  = 4'b1101;  
    
     
@@ -42,8 +39,6 @@ module ALU(
             SLLV: o_res <= i_B << i_A;
             SRLV: o_res <= i_B >> i_A;
             SRAV: o_res <= $signed(i_B) >>> i_A;
-            //ADDU: o_res <= i_A + i_B;
-            //SUBU: o_res <= i_A - i_B;
             LUI:  o_res <= {i_B[15 : 0], 16'b0000000000000000};
             default: o_res <= 0;
         endcase

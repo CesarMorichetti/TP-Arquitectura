@@ -18,8 +18,6 @@ module ALU_control(
     parameter [3 : 0] SLLV = 4'b1010;  
     parameter [3 : 0] SRLV = 4'b1011;  
     parameter [3 : 0] SRAV = 4'b1100;  
-    //parameter [3 : 0] ADDU = 4'b1101;  
-    //parameter [3 : 0] SUBU = 4'b1110;  
     parameter [3 : 0] LUI  = 4'b1101;
 
     always@(*)begin

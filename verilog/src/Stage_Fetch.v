@@ -29,14 +29,6 @@ module Stage_Fetch(
     wire [31:0] bus3; //salida PC y entrada a ADD y InstMemory
     wire [31:0] bus4; //salida InstMemory
     wire [7 :0] bus_mux_memory; //bus entre mux
-/*
-    MUX2to1 u_MUX_branch(
-            .i_selector(i_MUX_branch_selector),
-            .i_entradaMUX_0(bus1),
-            .i_entradaMUX_1(i_branch_address),
-            .o_salidaMUX(bus5)
-            );
-*/
 //Multiplexor de PC
     MUX2to1 #(.LEN(32))
             u_MUX_PC(
