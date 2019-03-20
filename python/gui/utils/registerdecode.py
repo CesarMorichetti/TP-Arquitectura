@@ -68,7 +68,7 @@ def reg_decode(func_type, instr, regs):
         if (instr == "jalr"):
             try:
                 #return[         rs       ,rt,         rd        ,shamt]
-                return [registers[regs[0]], 0, registers[regs[1]], 0]
+                return [registers[regs[1]], 0, registers[regs[0]], 0]
             except:
                 return None
 

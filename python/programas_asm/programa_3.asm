@@ -22,5 +22,5 @@ nop
 nop
 sw r5 0(r0)
 or r6 r1 r2 
-jalr r31 r7
+jalr r7 r31
 halt
