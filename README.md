@@ -1,7 +1,9 @@
 # Implementación de un pipeline del procesador MIPS
 ## Autores
+
     - César Morichetti
     - Diego Garbiglia
+
 ## Descripción
 1. El Procesador MIPS esta segmentado en las siguientes Etapas:
 	- IF (Instruction Fetch): Búsqueda de la instrucción en la memoria de programa.
