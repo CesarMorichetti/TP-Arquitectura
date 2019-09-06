@@ -1,4 +1,7 @@
 # Implementación de un pipeline del procesador MIPS
+## Autores
+    - César Morichetti
+    - Diego Garbiglia
 ## Descripción
 1. El Procesador MIPS esta segmentado en las siguientes Etapas:
 	- IF (Instruction Fetch): Búsqueda de la instrucción en la memoria de programa.
@@ -24,4 +27,5 @@ Antes de estar disponible para ejecutar, el procesador está a la espera para re
 1. Continuo, se envía un comando a la FPGA por UART y esta inicia la ejecución del programa hasta llegar al final del mismo (Instrucción HALT). Llegado ese punto se muestran todos los valores indicados en pantalla.
 2. Paso a paso: Enviando un comando por UART se ejecuta un ciclo de Clock.
 
+## Arquitectura
 ![](https://github.com/CesarMorichetti/TP-Arquitectura/blob/master/image/pipeline.png)
